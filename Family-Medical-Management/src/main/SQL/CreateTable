@@ -1,0 +1,301 @@
+-- Tạo database
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'medical_family_db')
+    CREATE DATABASE medical_family_db;
+GO
+
+USE medical_family_db;
+GO
+
+-- Bảng User
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'user')
+BEGIN TRY
+    CREATE TABLE [user] (
+        user_id INT IDENTITY(1,1) PRIMARY KEY,
+        username NVARCHAR(100) NOT NULL UNIQUE,
+        email NVARCHAR(255) NOT NULL UNIQUE,
+        password NVARCHAR(255) NOT NULL,
+        phone NVARCHAR(20) NOT NULL,
+        address NVARCHAR(MAX),
+        created_at DATETIME2 DEFAULT GETDATE(),
+        role NVARCHAR(20) NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'doctor', 'admin')),
+        is_active BIT DEFAULT 1
+    );
+END TRY
+BEGIN CATCH
+    PRINT 'Error creating user: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_username')
+CREATE INDEX idx_username ON [user](username);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_email')
+CREATE INDEX idx_email ON [user](email);
+GO
+
+-- Bảng Doctor
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'doctor')
+BEGIN TRY
+    CREATE TABLE doctor (
+        doctor_id INT IDENTITY(1,1) PRIMARY KEY,
+        full_name NVARCHAR(100) NOT NULL,
+        specialty NVARCHAR(100) NOT NULL,
+        clinic_name NVARCHAR(100),
+        email NVARCHAR(255) NOT NULL UNIQUE,
+        phone NVARCHAR(20) NOT NULL,
+        license_number NVARCHAR(50) UNIQUE,
+        is_active BIT DEFAULT 1
+    );
+END TRY
+BEGIN CATCH
+    PRINT 'Error creating doctor: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_email_doctor')
+CREATE INDEX idx_email_doctor ON doctor(email);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_license')
+CREATE INDEX idx_license ON doctor(license_number);
+GO
+
+-- Bảng Patient
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'patient')
+BEGIN TRY
+    CREATE TABLE patient (
+        patient_id INT IDENTITY(1,1) PRIMARY KEY,
+        [user_id] INT NOT NULL,
+        full_name NVARCHAR(100) NOT NULL,
+        date_of_birth DATE NOT NULL,
+        gender NVARCHAR(10) NOT NULL CHECK (gender IN ('male', 'female', 'other')),
+        blood_type NVARCHAR(5),
+        emergency_contact NVARCHAR(20),
+        created_at DATETIME2 DEFAULT GETDATE()
+    );
+END TRY
+BEGIN CATCH
+    PRINT 'Error creating patient: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_patient_user')
+BEGIN TRY
+    ALTER TABLE patient ADD CONSTRAINT FK_patient_user FOREIGN KEY ([user_id]) REFERENCES [user](user_id) ON DELETE CASCADE;
+END TRY
+BEGIN CATCH
+    PRINT 'Error adding FK to patient: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_user_id')
+CREATE INDEX idx_user_id ON patient([user_id]);
+GO
+
+-- Bảng MedicalRecord
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'medical_record')
+BEGIN TRY
+    CREATE TABLE medical_record (
+        record_id INT IDENTITY(1,1) PRIMARY KEY,
+        patient_id INT NOT NULL,
+        diagnosis NVARCHAR(MAX),
+        treatment NVARCHAR(MAX),
+        medications NVARCHAR(MAX),
+        allergies NVARCHAR(MAX),
+        notes NVARCHAR(MAX),
+        record_date DATE NOT NULL,
+        doctor_name NVARCHAR(100)
+    );
+END TRY
+BEGIN CATCH
+    PRINT 'Error creating medical_record: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_medical_record_patient')
+BEGIN TRY
+    ALTER TABLE medical_record ADD CONSTRAINT FK_medical_record_patient FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE;
+END TRY
+BEGIN CATCH
+    PRINT 'Error adding FK to medical_record: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_patient_id')
+CREATE INDEX idx_patient_id ON medical_record(patient_id);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_record_date')
+CREATE INDEX idx_record_date ON medical_record(record_date);
+GO
+
+-- Bảng Transfer
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'transfer')
+BEGIN TRY
+    CREATE TABLE transfer (
+        transfer_id INT IDENTITY(1,1) PRIMARY KEY,
+        [user_id] INT NOT NULL,
+        patient_id INT NOT NULL,
+        doctor_id INT NOT NULL,
+        record_ids NVARCHAR(MAX),
+        access_type NVARCHAR(10) NOT NULL DEFAULT 'view' CHECK (access_type IN ('view', 'edit')),
+        expires_at DATETIME2,
+        status NVARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'revoked')),
+        transferred_at DATETIME2 DEFAULT GETDATE()
+    );
+END TRY
+BEGIN CATCH
+    PRINT 'Error creating transfer: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_transfer_user')
+BEGIN TRY
+    ALTER TABLE transfer ADD CONSTRAINT FK_transfer_user FOREIGN KEY ([user_id]) REFERENCES [user](user_id) ON DELETE CASCADE;
+END TRY
+BEGIN CATCH
+    PRINT 'Error adding FK user to transfer: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_transfer_patient')
+BEGIN TRY
+    ALTER TABLE transfer ADD CONSTRAINT FK_transfer_patient FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE;
+END TRY
+BEGIN CATCH
+    PRINT 'Error adding FK patient to transfer: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_transfer_doctor')
+BEGIN TRY
+    ALTER TABLE transfer ADD CONSTRAINT FK_transfer_doctor FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE;
+END TRY
+BEGIN CATCH
+    PRINT 'Error adding FK doctor to transfer: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_user_id_transfer')
+CREATE INDEX idx_user_id_transfer ON transfer([user_id]);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_patient_id_transfer')
+CREATE INDEX idx_patient_id_transfer ON transfer(patient_id);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_doctor_id_transfer')
+CREATE INDEX idx_doctor_id_transfer ON transfer(doctor_id);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_status')
+CREATE INDEX idx_status ON transfer(status);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_expires_at')
+CREATE INDEX idx_expires_at ON transfer(expires_at);
+GO
+
+-- Bảng Appointment
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointment')
+BEGIN TRY
+    CREATE TABLE appointment (
+        appointment_id INT IDENTITY(1,1) PRIMARY KEY,
+        patient_id INT NOT NULL,
+        doctor_id INT NOT NULL,
+        transfer_id INT,
+        appointment_date DATETIME2 NOT NULL,
+        status NVARCHAR(20) NOT NULL DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'cancelled')),
+        notes NVARCHAR(MAX)
+    );
+END TRY
+BEGIN CATCH
+    PRINT 'Error creating appointment: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_appointment_patient')
+BEGIN TRY
+    ALTER TABLE appointment ADD CONSTRAINT FK_appointment_patient FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE;
+END TRY
+BEGIN CATCH
+    PRINT 'Error adding FK patient to appointment: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_appointment_doctor')
+BEGIN TRY
+    ALTER TABLE appointment ADD CONSTRAINT FK_appointment_doctor FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE;
+END TRY
+BEGIN CATCH
+    PRINT 'Error adding FK doctor to appointment: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_appointment_transfer')
+BEGIN TRY
+    ALTER TABLE appointment ADD CONSTRAINT FK_appointment_transfer FOREIGN KEY (transfer_id) REFERENCES transfer(transfer_id) ON DELETE SET NULL;
+END TRY
+BEGIN CATCH
+    PRINT 'Error adding FK transfer to appointment: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_patient_id_appointment')
+CREATE INDEX idx_patient_id_appointment ON appointment(patient_id);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_doctor_id_appointment')
+CREATE INDEX idx_doctor_id_appointment ON appointment(doctor_id);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_appointment_date')
+CREATE INDEX idx_appointment_date ON appointment(appointment_date);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_status_appointment')
+CREATE INDEX idx_status_appointment ON appointment(status);
+GO
+
+-- Bảng AuditLog
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'audit_log')
+BEGIN TRY
+    CREATE TABLE audit_log (
+        log_id INT IDENTITY(1,1) PRIMARY KEY,
+        [user_id] INT,
+        action NVARCHAR(50) NOT NULL,
+        details NVARCHAR(MAX),
+        ip_address NVARCHAR(45),
+        created_at DATETIME2 DEFAULT GETDATE()
+    );
+END TRY
+BEGIN CATCH
+    PRINT 'Error creating audit_log: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE name = 'FK_audit_log_user')
+BEGIN TRY
+    ALTER TABLE audit_log ADD CONSTRAINT FK_audit_log_user FOREIGN KEY ([user_id]) REFERENCES [user](user_id) ON DELETE SET NULL;
+END TRY
+BEGIN CATCH
+    PRINT 'Error adding FK to audit_log: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_user_id_audit')
+CREATE INDEX idx_user_id_audit ON audit_log([user_id]);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_action')
+CREATE INDEX idx_action ON audit_log(action);
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_created_at')
+CREATE INDEX idx_created_at ON audit_log(created_at);
+GO
+
+-- Kết thúc script tạo bảng
+SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME IN ('user', 'doctor', 'patient', 'medical_record', 'transfer', 'appointment', 'audit_log');
+GO
