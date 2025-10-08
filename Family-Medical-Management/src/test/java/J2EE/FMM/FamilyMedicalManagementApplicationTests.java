@@ -1,4 +1,4 @@
-package J2EE.Family.Medical.Management;
+package J2EE.FMM;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
