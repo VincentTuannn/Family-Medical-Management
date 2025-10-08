@@ -13,11 +13,11 @@ public class UserDTO {
     private String username; //Tên người dùng
     private String email; //Email đăng ký
     private String password; //Mật khẩu
-    private String phone;
-    private String address;
-    private Timestamp createdAt;
-    private String role; // "USER", "DOCTOR", "ADMIN"
-    private boolean isActive;
+    private String phone; //Số điện thoại
+    private String address; //Địa chỉ
+    private Timestamp createdAt; //Thời gian lúc được tạo ra
+    private String role; // Vai trò: "USER", "DOCTOR", "ADMIN"
+    private boolean isActive; //Trạng thái
 
     public UserDTO(Integer userId, String username, String email, String password, String phone, String address, Timestamp createdAt, String role, boolean isActive) {
         this.userId = userId;
