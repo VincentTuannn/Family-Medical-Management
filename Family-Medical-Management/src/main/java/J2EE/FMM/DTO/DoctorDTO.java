@@ -1,5 +1,12 @@
 package J2EE.FMM.DTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DoctorDTO {
     private Integer doctorId;
     private String fullName;

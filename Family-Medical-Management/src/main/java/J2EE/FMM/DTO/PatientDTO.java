@@ -1,8 +1,14 @@
 package J2EE.FMM.DTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PatientDTO {
     private Integer patientId;
     private Integer userId;
