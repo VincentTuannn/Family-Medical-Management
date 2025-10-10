@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,8 +30,16 @@ public class AuditLogService {
         return auditLogRepository.findByUser_UserId(userId).stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    public Optional<AuditLogDTO> findById(Integer id) {
+        return auditLogRepository.findById(id).map(this::toDTO);
+    }
+
     public List<AuditLogDTO> findAll() {
         return auditLogRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    public void deleteById(Integer id) {
+        auditLogRepository.deleteById(id);
     }
 
     // Business logic: Log action (gọi từ controller)
