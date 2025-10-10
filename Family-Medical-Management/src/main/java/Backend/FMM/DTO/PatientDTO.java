@@ -10,12 +10,12 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PatientDTO {
-    private Integer patientId;
-    private Integer userId;
-    private String fullName;
-    private Date dateOfBirth;
-    private String gender; // "MALE", "FEMALE"
-    private String bloodType;
-    private String emergencyContact;
-    private Timestamp createdAt;
+    private Integer patientId; //ID bệnh nhân
+    private Integer userId; //ID người dùng
+    private String fullName; //Họ tên
+    private Date dateOfBirth; //Ngày sinh
+    private String gender; //Giới tính: "MALE", "FEMALE"
+    private String bloodType; //Nhóm máu
+    private String emergencyContact; //Người liên hệ khẩn cấp
+    private Timestamp createdAt; //Ngày tạo
 }

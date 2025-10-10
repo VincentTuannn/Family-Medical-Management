@@ -9,13 +9,13 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicalRecordDTO {
-    private Integer recordId;
-    private Integer patientId;
-    private String diagnosis;
-    private String treatment;
-    private String medications; // JSON string, e.g., [{"name":"Aspirin","dosage":"100mg"}]
-    private String allergies; // JSON string
-    private String notes;
-    private Date recordDate;
-    private String doctorName;
+    private Integer recordId; //ID hồ sơ
+    private Integer patientId; //ID bệnh nhân
+    private String diagnosis; //Chẩn đoán
+    private String treatment; //Điều trị
+    private String medications; // Danh sách thuốc
+    private String allergies; // Dị ứng
+    private String notes; //Ghi chú
+    private Date recordDate; //Ngày ghi nhận
+    private String doctorName; //Tên bác sĩ ghi nhận
 }

@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DoctorDTO {
-    private Integer doctorId;
-    private String fullName;
-    private String specialty;
-    private String clinicName;
-    private String email;
-    private String phone;
-    private String licenseNumber;
-    private Boolean isActive;
+    private Integer doctorId; //ID bác sĩ
+    private String fullName; //Họ tên
+    private String specialty; //Chuyên khoa
+    private String clinicName; //Tên phòng khám
+    private String email; //Email
+    private String phone; //Số điện thoại
+    private String licenseNumber; //Số giấy phép hành nghề
+    private Boolean isActive; //Trạng thái hoạt động
 }

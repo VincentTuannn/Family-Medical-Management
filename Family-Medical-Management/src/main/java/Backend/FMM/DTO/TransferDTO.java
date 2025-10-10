@@ -10,13 +10,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransferDTO {
-    private Integer transferId;
-    private Integer userId;
-    private Integer patientId;
-    private Integer doctorId;
+    private Integer transferId; //ID chuyển
+    private Integer userId; //ID người dùng
+    private Integer patientId; //ID bệnh nhân
+    private Integer doctorId; //ID bác sĩ
     private List<Integer> recordIds; // List ID hồ sơ
-    private String accessType; // "VIEW", "EDIT"
-    private Date expiresAt;
-    private String status; // "PENDING", "APPROVED", "REVOKED"
-    private Date transferredAt;
+    private String accessType; //Quyền truy cập: "VIEW", "EDIT"
+    private Date expiresAt; //Ngày hết hạn chia sẻ
+    private String status; //Trạng thái: "PENDING", "APPROVED", "REVOKED"
+    private Date transferredAt; //Ngày chuyển
 }

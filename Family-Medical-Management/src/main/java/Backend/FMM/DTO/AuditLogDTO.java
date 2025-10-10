@@ -9,10 +9,10 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuditLogDTO {
-    private Integer logId;
-    private Integer userId;
-    private String action;
-    private String details;
-    private String ipAddress;
-    private Timestamp createdAt;
+    private Integer logId; //ID log
+    private Integer userId; //ID người dùng
+    private String action; //Hành động
+    private String details; //Chi tiết
+    private String ipAddress; //IP người dùng
+    private Timestamp createdAt; //Thời gian
 }
