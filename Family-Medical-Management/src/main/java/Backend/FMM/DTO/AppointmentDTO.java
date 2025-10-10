@@ -8,7 +8,7 @@ public class AppointmentDTO {
     private Integer doctorId;
     private Integer transferId;
     private Date appointmentDate;
-    private String status; // "SCHEDULED", "COMPLETED", "CANCELLED"
+    private String status; // "SCHEDULED", "COMPLETED", "CANCELLED".
     private String notes;
 
     public AppointmentDTO(Integer appointmentId, Integer patientId, Integer doctorId, Integer transferId, Date appointmentDate, String status, String notes) {
