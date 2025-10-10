@@ -34,5 +34,5 @@ public class Doctor {
     private String licenseNumber;
 
     @Column(name = "is_active")
-    private boolean isActive = true;
+    private Boolean isActive = true;
 }

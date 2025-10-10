@@ -46,8 +46,32 @@ public class TransferService {
     }
 
     private TransferDTO toDTO(Transfer transfer) {
+        // Parse recordIds from JSON string to List<Integer>
+        List<Integer> recordIds = null;
+        if (transfer.getRecordIds() != null && !transfer.getRecordIds().isEmpty()) {
+            try {
+                // Simple JSON array parsing for [1,2,3] format
+                String json = transfer.getRecordIds().replaceAll("[\\[\\]\\s]", "");
+                if (!json.isEmpty()) {
+                    recordIds = java.util.Arrays.stream(json.split(","))
+                            .map(String::trim)
+                            .map(Integer::parseInt)
+                            .collect(java.util.stream.Collectors.toList());
+                }
+            } catch (Exception e) {
+                // If parsing fails, set to null
+                recordIds = null;
+            }
+        }
+        
+        // Convert Timestamp to Date for DTO
+        java.sql.Date expiresAtDate = transfer.getExpiresAt() != null ? 
+            new java.sql.Date(transfer.getExpiresAt().getTime()) : null;
+        java.sql.Date transferredAtDate = transfer.getTransferredAt() != null ? 
+            new java.sql.Date(transfer.getTransferredAt().getTime()) : null;
+            
         return new TransferDTO(transfer.getTransferId(), transfer.getUser().getUserId(), transfer.getPatient().getPatientId(),
-                transfer.getDoctor().getDoctorId(), null, transfer.getAccessType().name(), transfer.getExpiresAt(),
-                transfer.getStatus().name(), transfer.getTransferredAt());  // recordIds cần parse JSON nếu cần
+                transfer.getDoctor().getDoctorId(), recordIds, transfer.getAccessType().name(), expiresAtDate,
+                transfer.getStatus().name(), transferredAtDate);
     }
 }

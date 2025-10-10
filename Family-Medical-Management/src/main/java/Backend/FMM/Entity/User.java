@@ -39,10 +39,10 @@ public class User {
     @Column(nullable = false)
     private Role role = Role.USER;
 
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
     public enum Role {
         USER, DOCTOR, ADMIN
     }
-
-    @Column(name = "is_active")
-    private boolean isActive = true;
 }

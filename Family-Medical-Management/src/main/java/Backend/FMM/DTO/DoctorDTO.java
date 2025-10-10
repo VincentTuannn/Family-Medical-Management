@@ -15,5 +15,5 @@ public class DoctorDTO {
     private String email;
     private String phone;
     private String licenseNumber;
-    private boolean isActive;
+    private Boolean isActive;
 }

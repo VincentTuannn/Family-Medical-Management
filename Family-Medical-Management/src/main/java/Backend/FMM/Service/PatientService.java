@@ -41,6 +41,7 @@ public class PatientService {
 
     private PatientDTO toDTO(Patient patient) {
         return new PatientDTO(patient.getPatientId(), patient.getUser().getUserId(), patient.getFullName(),
-                patient.getDateOfBirth(), patient.getGender().name(), patient.getBloodType(), patient.getEmergencyContact());
+                patient.getDateOfBirth(), patient.getGender().name(), patient.getBloodType(), patient.getEmergencyContact(),
+                patient.getCreatedAt());
     }
 }

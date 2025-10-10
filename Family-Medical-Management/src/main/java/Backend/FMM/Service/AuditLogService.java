@@ -2,6 +2,7 @@ package Backend.FMM.Service;
 
 import Backend.FMM.DTO.AuditLogDTO;
 import Backend.FMM.Entity.AuditLog;
+import Backend.FMM.Entity.User;
 import Backend.FMM.Repository.AuditLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,9 @@ public class AuditLogService {
     // Business logic: Log action (gọi từ controller)
     public void logAction(Integer userId, String action, String details, String ip) {
         AuditLog log = new AuditLog();
-        log.setUser(new User());  // Set user từ ID
+        User user = new User();
+        user.setUserId(userId);
+        log.setUser(user);  // Set user từ ID
         log.setAction(action);
         log.setDetails(details);
         log.setIpAddress(ip);

@@ -23,7 +23,7 @@ public class DoctorService {
         doctor.setEmail(dto.getEmail());
         doctor.setPhone(dto.getPhone());
         doctor.setLicenseNumber(dto.getLicenseNumber());
-        doctor.setIsActive(dto.isActive());
+        doctor.setIsActive(dto.getIsActive());
         Doctor savedDoctor = doctorRepository.save(doctor);
         return toDTO(savedDoctor);
     }
@@ -42,6 +42,6 @@ public class DoctorService {
 
     private DoctorDTO toDTO(Doctor doctor) {
         return new DoctorDTO(doctor.getDoctorId(), doctor.getFullName(), doctor.getSpecialty(), doctor.getClinicName(),
-                doctor.getEmail(), doctor.getPhone(), doctor.getLicenseNumber(), doctor.isActive());
+                doctor.getEmail(), doctor.getPhone(), doctor.getLicenseNumber(), doctor.getIsActive());
     }
 }

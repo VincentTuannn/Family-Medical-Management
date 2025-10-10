@@ -23,11 +23,11 @@ public class UserService {
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
-        user.setPasswordHash(passwordEncoder.encode(dto.getPasswordHash()));  // Encode mật khẩu
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));  // Encode mật khẩu
         user.setPhone(dto.getPhone());
         user.setAddress(dto.getAddress());
         user.setRole(User.Role.valueOf(dto.getRole()));
-        user.setIsActive(dto.isActive());
+        user.setIsActive(dto.getIsActive());
         User savedUser = userRepository.save(user);
         return toDTO(savedUser);
     }
@@ -49,7 +49,7 @@ public class UserService {
     }
 
     private UserDTO toDTO(User user) {
-        return new UserDTO(user.getUserId(), user.getUsername(), user.getEmail(), user.getPasswordHash(),
-                user.getPhone(), user.getAddress(), user.getCreatedAt(), user.getRole().name(), user.isActive());
+        return new UserDTO(user.getUserId(), user.getUsername(), user.getEmail(), user.getPassword(),
+                user.getPhone(), user.getAddress(), user.getCreatedAt(), user.getRole().name(), user.getIsActive());
     }
 }

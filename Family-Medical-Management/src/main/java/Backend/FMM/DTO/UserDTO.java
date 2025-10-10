@@ -17,5 +17,5 @@ public class UserDTO {
     private String address; //Địa chỉ
     private Timestamp createdAt; //Thời gian lúc được tạo ra
     private String role; // Vai trò: "USER", "DOCTOR", "ADMIN"
-    private boolean isActive; //Trạng thái
+    private Boolean isActive; //Trạng thái
 }
