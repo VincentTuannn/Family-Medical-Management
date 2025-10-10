@@ -1,6 +1,7 @@
 package Backend.FMM.Service;
 
 import Backend.FMM.DTO.PatientDTO;
+import Backend.FMM.DTO.UserDTO;
 import Backend.FMM.Entity.Patient;
 import Backend.FMM.Repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,10 @@ public class PatientService {
 
     public List<PatientDTO> findAllByUserId(Integer userId) {
         return patientRepository.findByUser_UserId(userId).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    public List<PatientDTO> findAll() {
+        return patientRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     public void deleteById(Integer id) {

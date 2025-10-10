@@ -37,6 +37,10 @@ public class MedicalRecordService {
         return medicalRecordRepository.findByPatient_PatientId(patientId).stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    public List<MedicalRecordDTO> findAll() {
+        return medicalRecordRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
     public void deleteById(Integer id) {
         medicalRecordRepository.deleteById(id);
     }

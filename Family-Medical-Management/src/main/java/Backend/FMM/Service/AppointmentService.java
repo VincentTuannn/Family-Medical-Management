@@ -1,6 +1,7 @@
 package Backend.FMM.Service;
 
 import Backend.FMM.DTO.AppointmentDTO;
+import Backend.FMM.DTO.TransferDTO;
 import Backend.FMM.Entity.Appointment;
 import Backend.FMM.Repository.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class AppointmentService {
 
     public List<AppointmentDTO> findAllByPatientId(Integer patientId) {
         return appointmentRepository.findByPatient_PatientId(patientId).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    public List<AppointmentDTO> findAll() {
+        return appointmentRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     public void deleteById(Integer id) {

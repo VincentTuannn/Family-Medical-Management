@@ -35,6 +35,10 @@ public class TransferService {
         return transferRepository.findByUser_UserId(userId).stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    public List<TransferDTO> findAll() {
+        return transferRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
     public void deleteById(Integer id) {
         transferRepository.deleteById(id);
     }

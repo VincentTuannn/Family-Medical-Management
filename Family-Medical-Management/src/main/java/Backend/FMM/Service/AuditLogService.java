@@ -29,6 +29,10 @@ public class AuditLogService {
         return auditLogRepository.findByUser_UserId(userId).stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    public List<AuditLogDTO> findAll() {
+        return auditLogRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
     // Business logic: Log action (gọi từ controller)
     public void logAction(Integer userId, String action, String details, String ip) {
         AuditLog log = new AuditLog();
