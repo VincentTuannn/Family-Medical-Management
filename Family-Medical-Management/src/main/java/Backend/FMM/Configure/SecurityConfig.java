@@ -19,8 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;     // ✅ Dùng bản non-reactive
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;  // ✅ Dùng bản non-reactive
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
@@ -30,7 +30,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;   // ✅ để Spring tự inject
+    private JwtAuthenticationFilter jwtAuthenticationFilter;   // để Spring tự inject
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -45,7 +45,7 @@ public class SecurityConfig {
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
 
-        // ✅ Constructor mới của DaoAuthenticationProvider yêu cầu truyền UserDetailsService
+        // Constructor mới của DaoAuthenticationProvider yêu cầu truyền UserDetailsService
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
@@ -70,13 +70,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
                         .anyRequest().authenticated()
                 )
-                // ✅ KHÔNG gọi new JwtAuthenticationFilter(), mà inject autowired filter
+                // KHÔNG gọi new JwtAuthenticationFilter(), mà inject autowired filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ✅ Không cần Bean cho JwtAuthenticationFilter nữa
+    // Không cần Bean cho JwtAuthenticationFilter nữa
     // Spring sẽ quản lý tự động vì trong class JwtAuthenticationFilter có @Component
 
     @Bean

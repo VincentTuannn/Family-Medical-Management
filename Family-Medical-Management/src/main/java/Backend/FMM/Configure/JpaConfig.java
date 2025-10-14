@@ -24,14 +24,14 @@ public class JpaConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, JpaProperties jpaProperties) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("J2EE.FMM.Entity");  // Scan entities
+        em.setPackagesToScan("Backend.FMM.Entity");  // Scan entities
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
 
         // Custom Hibernate properties (sử dụng Map<String, Object>)
         Map<String, Object> properties = new HashMap<>(jpaProperties.getProperties());
-        properties.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");  // Dialect cho SQL Server
+        properties.put("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
         properties.put("hibernate.naming.physical-strategy", "org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy");  //Hỗ trợ snake_case
         properties.put("hibernate.show_sql", true);  // Log SQL
         properties.put("hibernate.format_sql", true);  // Format SQL log
