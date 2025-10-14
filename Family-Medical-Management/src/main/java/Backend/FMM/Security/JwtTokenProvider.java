@@ -1,46 +1,65 @@
 package Backend.FMM.Security;
 
-import io.jsonwebtoken.*;
-import lombok.Value;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+import javax.crypto.SecretKey;
+import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
+
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
     @Value("${app.jwt.expiration}")
     private long jwtExpirationInMs;
 
-    // Tạo JWT từ username
+    // 🔐 Tạo key bảo mật từ secret string
+    private SecretKey getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    // Tạo JWT
     public String generateToken(String username) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .subject(username)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSignKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
     // Lấy username từ JWT
     public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
 
         return claims.getSubject();
     }
 
-    // Kiểm tra token hợp lệ hay không
+    // Kiểm tra token hợp lệ
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parser()
+                    .verifyWith(getSignKey())
+                    .build()
+                    .parseSignedClaims(authToken);
             return true;
         } catch (MalformedJwtException ex) {
             System.out.println("Token không hợp lệ");
@@ -49,7 +68,7 @@ public class JwtTokenProvider {
         } catch (UnsupportedJwtException ex) {
             System.out.println("Token không được hỗ trợ");
         } catch (IllegalArgumentException ex) {
-            System.out.println("Chuỗi JWT trống");
+            System.out.println("Chuỗi JWT trống hoặc không hợp lệ");
         }
         return false;
     }
