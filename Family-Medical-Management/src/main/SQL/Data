@@ -1,51 +1,48 @@
 USE medical_family_db;
-GO
 
 -- Thêm Users
-INSERT INTO [user] (username, email, password, phone, address, role, is_active) VALUES
-('nguyenvannam', 'nam.nguyen@email.com', 'hashed_pass_123', '0123456789', N'123 Đường ABC, Hà Nội', 'user', 1),
-('tranthilan', 'lan.tran@email.com', 'hashed_pass_456', '0987654321', N'456 Đường XYZ, TP.HCM', 'user', 1);
-GO
+INSERT INTO `user` (username, email, password, phone, address, role, is_active) VALUES
+('nguyenvannam', 'nam.nguyen@email.com', 'hashed_pass_123', '0123456789', '123 Đường ABC, Hà Nội', 'user', 1),
+('tranthilan', 'lan.tran@email.com', 'hashed_pass_456', '0987654321', '456 Đường XYZ, TP.HCM', 'user', 1);
 
 -- Thêm Doctors
 INSERT INTO doctor (full_name, specialty, clinic_name, email, phone, license_number, is_active) VALUES
-(N'Lê Văn Hải', N'Nội khoa', N'Phòng khám Nội Hải', 'hai.le@doctor.com', '0111222333', 'BS001', 1),
-(N'Phạm Thị Hoa', N'Nhi khoa', N'Phòng khám Nhi Hoa', 'hoa.pham@doctor.com', '0444555666', 'BS002', 1);
-GO
+('Lê Văn Hải', 'Nội khoa', 'Phòng khám Nội Hải', 'hai.le@doctor.com', '0111222333', 'BS001', 1),
+('Phạm Thị Hoa', 'Nhi khoa', 'Phòng khám Nhi Hoa', 'hoa.pham@doctor.com', '0444555666', 'BS002', 1);
 
 -- Thêm Patients
-INSERT INTO patient ([user_id], full_name, date_of_birth, gender, blood_type, emergency_contact) VALUES
-(1, N'Nguyễn Văn An', '2010-05-15', 'male', 'O+', '0123456789'),
-(1, N'Nguyễn Thị Mai', '1985-08-20', 'female', 'A+', '0123456789'),
-(2, N'Trần Văn Bình', '2012-03-10', 'male', 'B-', '0987654321');
-GO
+INSERT INTO patient (user_id, full_name, date_of_birth, gender, blood_type, emergency_contact) VALUES
+(1, 'Nguyễn Văn An', '2010-05-15', 'male', 'O+', '0123456789'),
+(1, 'Nguyễn Thị Mai', '1985-08-20', 'female', 'A+', '0123456789'),
+(2, 'Trần Văn Bình', '2012-03-10', 'male', 'B-', '0987654321');
 
 -- Thêm MedicalRecords
 INSERT INTO medical_record (patient_id, diagnosis, treatment, medications, allergies, notes, record_date, doctor_name) VALUES
-(1, N'Cảm cúm thông thường', N'Nghỉ ngơi và uống thuốc giảm đau', N'[{"name": "Paracetamol", "dosage": "500mg", "frequency": "2 lần/ngày"}]', N'[{"name": "Aspirin"}]', N'Khám tại nhà, tình trạng nhẹ', '2025-09-01', N'Lê Văn Hải'),
-(2, N'Thiếu máu nhẹ', N'Bổ sung sắt và vitamin', N'[{"name": "Ferroglobin", "dosage": "1 viên/ngày"}]', N'[]', N'Theo dõi định kỳ', '2025-08-15', N'Phạm Thị Hoa'),
-(3, N'Sốt siêu vi', N'Uống nước nhiều và hạ sốt', N'[{"name": "Ibuprofen", "dosage": "200mg", "frequency": "3 lần/ngày"}]', N'[{"name": "Penicillin"}]', N'Đã khỏi sau 3 ngày', '2025-09-20', N'Lê Văn Hải');
-GO
+(1, 'Cảm cúm thông thường', 'Nghỉ ngơi và uống thuốc giảm đau',
+    '[{"name": "Paracetamol", "dosage": "500mg", "frequency": "2 lần/ngày"}]',
+    '[{"name": "Aspirin"}]', 'Khám tại nhà, tình trạng nhẹ', '2025-09-01', 'Lê Văn Hải'),
+(2, 'Thiếu máu nhẹ', 'Bổ sung sắt và vitamin',
+    '[{"name": "Ferroglobin", "dosage": "1 viên/ngày"}]',
+    '[]', 'Theo dõi định kỳ', '2025-08-15', 'Phạm Thị Hoa'),
+(3, 'Sốt siêu vi', 'Uống nước nhiều và hạ sốt',
+    '[{"name": "Ibuprofen", "dosage": "200mg", "frequency": "3 lần/ngày"}]',
+    '[{"name": "Penicillin"}]', 'Đã khỏi sau 3 ngày', '2025-09-20', 'Lê Văn Hải');
 
 -- Thêm Transfers
-INSERT INTO transfer ([user_id], patient_id, doctor_id, record_ids, access_type, expires_at, status) VALUES
-(1, 1, 1, N'[1]', 'view', '2025-10-15 00:00:00', 'pending'),
-(2, 3, 2, N'[2, 3]', 'edit', '2025-11-01 00:00:00', 'approved');
-GO
+INSERT INTO transfer (user_id, patient_id, doctor_id, record_ids, access_type, expires_at, status) VALUES
+(1, 1, 1, '[1]', 'view', '2025-10-15 00:00:00', 'pending'),
+(2, 3, 2, '[2, 3]', 'edit', '2025-11-01 00:00:00', 'approved');
 
 -- Thêm Appointments
 INSERT INTO appointment (patient_id, doctor_id, transfer_id, appointment_date, status, notes) VALUES
-(1, 1, 1, '2025-10-10 14:00:00', 'scheduled', N'Kiểm tra sau chuyển hồ sơ'),
-(3, 2, 2, '2025-10-12 09:30:00', 'completed', N'Đã khám và cập nhật hồ sơ');
-GO
+(1, 1, 1, '2025-10-10 14:00:00', 'scheduled', 'Kiểm tra sau chuyển hồ sơ'),
+(3, 2, 2, '2025-10-12 09:30:00', 'completed', 'Đã khám và cập nhật hồ sơ');
 
 -- Thêm AuditLogs
-INSERT INTO audit_log ([user_id], action, details, ip_address) VALUES
-(1, 'transfer_record', N'{"transfer_id": 1, "patient": "Nguyễn Văn An"}', '192.168.1.100'),
-(2, 'update_medical', N'{"record_id": 3, "changes": "Cập nhật dị ứng"}', '192.168.1.101');
-GO
+INSERT INTO audit_log (user_id, action, details, ip_address) VALUES
+(1, 'transfer_record', '{"transfer_id": 1, "patient": "Nguyễn Văn An"}', '192.168.1.100'),
+(2, 'update_medical', '{"record_id": 3, "changes": "Cập nhật dị ứng"}', '192.168.1.101');
 
 -- Kiểm tra
-SELECT TOP 2 * FROM [user];
-SELECT TOP 3 * FROM patient;
-GO
+SELECT * FROM `user` LIMIT 2;
+SELECT * FROM patient LIMIT 3;
