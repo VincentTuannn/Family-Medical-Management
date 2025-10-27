@@ -1,0 +1,28 @@
+.patient-container {
+  padding: 1rem;
+
+  h2 {
+    color: #4EC7C0;  // Màu header của bạn
+    margin-bottom: 1rem;
+  }
+
+  button {
+    margin-bottom: 1rem;
+  }
+
+  table {
+    width: 100%;
+    min-width: 600px;  // Đảm bảo table rộng
+
+    th, td {
+      padding: 0.5rem;
+      text-align: left;
+    }
+
+    // Responsive: Scroll ngang trên mobile
+    @media (max-width: 768px) {
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  }
+}
