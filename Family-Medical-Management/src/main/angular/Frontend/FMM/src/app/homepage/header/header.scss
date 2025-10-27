@@ -1,0 +1,55 @@
+.app-header {
+  height: 60px;
+  background-color: #4EC7C0;  // Màu bạn chọn
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;  // Cao hơn menu
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .menu-toggle {
+    mat-icon { font-size: 24px; color: white; }
+  }
+}
+
+.main-content {
+  margin-top: 60px;  // Dịch nội dung xuống dưới header
+  padding: 1rem;
+  min-height: calc(100vh - 60px);
+}
+
+// Overlay khi menu mở (tùy chọn, che nội dung)
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 999;
+  display: none;
+
+  &.open { display: block; }
+}
+
+@media (max-width: 768px) {
+  .app-header { height: 50px; padding: 0 0.5rem; }
+  .main-content { margin-top: 50px; }
+}

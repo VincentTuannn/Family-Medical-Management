@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "medical-family-frontend": {
+    "FMM": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -28,12 +28,7 @@
             ],
             "styles": [
               "src/styles.scss"
-            ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            ]
           },
           "configurations": {
             "production": {
@@ -63,10 +58,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "medical-family-frontend:build:production"
+              "buildTarget": "FMM:build:production"
             },
             "development": {
-              "buildTarget": "medical-family-frontend:build:development"
+              "buildTarget": "FMM:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -92,5 +87,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "50e551cc-d2a9-4061-89b5-e17709519407"
   }
 }
