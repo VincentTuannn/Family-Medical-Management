@@ -5,7 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';  
-import { PatientDTO } from '../../../model/patient.model';  
+import { PatientDTO } from '../../../features/model/patient.model';  
 
 @Component({
   selector: 'app-patient-dialog',
@@ -36,10 +36,16 @@ import { PatientDTO } from '../../../model/patient.model';
           <mat-select [(ngModel)]="patient.gender" name="gender" required>
             <mat-option value="male">Nam</mat-option>
             <mat-option value="female">Nữ</mat-option>
-            <mat-option value="other">Khác</mat-option>
           </mat-select>
         </mat-form-field>
-        <!-- Thêm fields khác nếu cần (bloodType, emergencyContact) -->
+        <mat-form-field appearance="fill">
+          <mat-label>Nhóm Máu</mat-label>
+          <input matInput [(ngModel)]="patient.bloodType" name="bloodType" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Số Điện Thoại Khẩn Cấp</mat-label>
+          <input matInput [(ngModel)]="patient.emergencyContact" name="emergencyContact" required>
+        </mat-form-field>
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">

@@ -1,28 +1,36 @@
-.patient-container {
-  padding: 1rem;
+.patient-header {
+  display: flex;
+  justify-content: space-between;  // Title trái, nút phải
+  align-items: center;  // Căn giữa dọc
+  padding: 1rem;  // Padding header
 
-  h2 {
-    color: #4EC7C0;  // Màu header của bạn
-    margin-bottom: 1rem;
+  .header-left {
+    flex: 1;  // Title chiếm không gian còn lại
+  }
+
+  .header-actions {
+    flex-shrink: 0;  // Nút không co lại
   }
 
   button {
-    margin-bottom: 1rem;
-  }
+    background-color: #4EC7C0;  // Màu header của bạn
+    color: white;
 
-  table {
-    width: 100%;
-    min-width: 600px;  // Đảm bảo table rộng
-
-    th, td {
-      padding: 0.5rem;
-      text-align: left;
+    &:hover {
+      background-color: #3BB1A8;  // Biến thể tối hơn
     }
+  }
+}
 
-    // Responsive: Scroll ngang trên mobile
-    @media (max-width: 768px) {
-      overflow-x: auto;
-      white-space: nowrap;
+// Responsive: Nút nhỏ hơn trên mobile
+@media (max-width: 768px) {
+  .patient-header {
+    flex-direction: column;  // Stack dọc nếu màn hình nhỏ
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    .header-actions {
+      align-self: flex-end;  // Nút vẫn bên phải
     }
   }
 }

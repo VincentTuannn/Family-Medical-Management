@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';  // Config URL backend
-import { PatientDTO } from '../../../model/patient.model';  // Model DTO từ backend
+import { PatientDTO } from '../../model/patient.model';  // Model DTO từ backend
 
 @Injectable({
   providedIn: 'root'
@@ -39,5 +39,9 @@ export class PatientService {
   // DELETE by ID
   deletePatient(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+  }
+
+  getPatientsByUserId(userId: number): Observable<PatientDTO[]> {
+    return this.http.get<PatientDTO[]>(`${this.apiUrl}/user/${userId}`, this.httpOptions);  // Gọi API /api/patient/user/{userId}
   }
 }
