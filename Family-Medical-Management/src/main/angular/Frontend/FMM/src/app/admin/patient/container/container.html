@@ -1,0 +1,46 @@
+<div class="patient-container">
+  <h2>Danh Sách Bệnh Nhân</h2>
+  
+  <!-- Nút thêm bệnh nhân -->
+  <button mat-raised-button color="primary" (click)="addPatient()">Thêm Bệnh Nhân</button>
+
+  <!-- Table Material -->
+  <table mat-table [dataSource]="patients" class="mat-elevation-z8">
+    <!-- Cột ID -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let patient">{{patient.patientId}}</td>
+    </ng-container>
+
+    <!-- Cột Tên -->
+    <ng-container matColumnDef="fullName">
+      <th mat-header-cell *matHeaderCellDef>Họ Tên</th>
+      <td mat-cell *matCellDef="let patient">{{patient.fullName}}</td>
+    </ng-container>
+
+    <!-- Cột Ngày Sinh -->
+    <ng-container matColumnDef="dateOfBirth">
+      <th mat-header-cell *matHeaderCellDef>Ngày Sinh</th>
+      <td mat-cell *matCellDef="let patient">{{patient.dateOfBirth | date:'dd/MM/yyyy'}}</td>
+    </ng-container>
+
+    <!-- Cột Giới Tính -->
+    <ng-container matColumnDef="gender">
+      <th mat-header-cell *matHeaderCellDef>Giới Tính</th>
+      <td mat-cell *matCellDef="let patient">{{patient.gender}}</td>
+    </ng-container>
+
+    <!-- Cột Actions -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Hành Động</th>
+      <td mat-cell *matCellDef="let patient">
+        <button mat-button color="primary" (click)="editPatient(patient.patientId)">Sửa</button>
+        <button mat-button color="warn" (click)="deletePatient(patient.patientId)">Xóa</button>
+      </td>
+    </ng-container>
+
+    <!-- Header và Row -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

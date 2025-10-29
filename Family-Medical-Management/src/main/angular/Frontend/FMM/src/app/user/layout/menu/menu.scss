@@ -1,0 +1,64 @@
+.app-sidenav {
+  position: fixed;  // Giữ fixed để overlay
+  top: 60px;  // Bắt đầu từ dưới header (60px height)
+  right: -280px;  // Ẩn ban đầu
+  width: 280px;
+  height: calc(100vh - 60px);  // Height trừ header (responsive)
+  background-color: #f8f9fa;
+  box-shadow: -2px 0 4px rgba(0,0,0,0.1);
+  transition: right 0.3s ease;
+  z-index: 1001;  // Vẫn cao hơn nội dung, nhưng header z-index 1000
+
+  &.open {
+    right: 0;  // Trượt ra
+  }
+
+  .sidenav-content {
+    padding: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidenav-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      text-decoration: none;
+      color: #333;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      mat-icon { color: #007bff; font-size: 20px; }
+
+      &:hover {
+        background-color: #e9ecef;
+      }
+
+      &.active {
+        background-color: #4EC7C0;
+        color: white;
+
+        mat-icon { color: white; }
+      }
+
+      &.logout {
+        margin-top: 0.5rem;
+        background-color: #dc3545;
+        color: white;
+
+        mat-icon { color: white; }
+
+        &:hover { background-color: #c82333; }
+      }
+    }
+  }
+}

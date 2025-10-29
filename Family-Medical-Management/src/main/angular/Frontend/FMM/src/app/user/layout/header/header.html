@@ -1,0 +1,16 @@
+<header class="app-header">
+  <div class="header-content">
+    <span class="brand">Family Medical Management</span>
+    <!-- Hamburger icon -->
+    <button mat-icon-button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu">
+      <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+  </div>
+</header>
+
+<!-- Import và sử dụng MenuComponent -->
+<app-menu [isOpen]="isOpen" (isOpenChange)="isOpen = $event"></app-menu>  <!-- Truyền isOpen như Input -->
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
