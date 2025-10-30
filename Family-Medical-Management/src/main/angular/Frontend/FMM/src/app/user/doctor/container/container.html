@@ -1,0 +1,68 @@
+<div class="doctor-container">
+  <h2>Danh Sách Bác Sĩ</h2>
+  <p>Chọn bác sĩ để xem thông tin và yêu cầu làm bác sĩ tư gia đình.</p>
+
+  <!-- Table Danh Sách Bác Sĩ -->
+  <table mat-table [dataSource]="doctors" class="mat-elevation-z8">
+    <!-- Cột Tên -->
+    <ng-container matColumnDef="fullName">
+      <th mat-header-cell *matHeaderCellDef>Tên Bác Sĩ</th>
+      <td mat-cell *matCellDef="let doctor">{{doctor.fullName}}</td>
+    </ng-container>
+
+    <!-- Cột Chuyên Khoa -->
+    <ng-container matColumnDef="specialty">
+      <th mat-header-cell *matHeaderCellDef>Chuyên Khoa</th>
+      <td mat-cell *matCellDef="let doctor">{{doctor.specialty}}</td>
+    </ng-container>
+
+    <!-- Cột Phòng Khám -->
+    <ng-container matColumnDef="clinicName">
+      <th mat-header-cell *matHeaderCellDef>Phòng Khám</th>
+      <td mat-cell *matCellDef="let doctor">{{doctor.clinicName}}</td>
+    </ng-container>
+
+    <!-- Cột Số Điện Thoại -->
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef>Số Điện Thoại</th>
+      <td mat-cell *matCellDef="let doctor">{{doctor.phone}}</td>
+    </ng-container>
+
+    <!-- Cột Email -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let doctor">{{doctor.email}}</td>
+    </ng-container>
+
+    <!-- Cột Hành Động -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Hành Động</th>
+      <td mat-cell *matCellDef="let doctor">
+        <button mat-button color="primary" (click)="viewDoctorDetail(doctor)">Xem Chi Tiết</button>
+        <button mat-button color="accent" (click)="hireDoctor(doctor.doctorId)">Thuê Bác Sĩ</button>
+      </td>
+    </ng-container>
+
+    <!-- Header và Row -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <!-- Card Chi Tiết Bác Sĩ Được Chọn -->
+  <mat-card *ngIf="selectedDoctor" class="doctor-detail-card">
+    <mat-card-header>
+      <mat-card-title>{{selectedDoctor.fullName}}</mat-card-title>
+      <mat-card-subtitle>{{selectedDoctor.specialty}} - {{selectedDoctor.clinicName}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p><strong>Email:</strong> {{selectedDoctor.email}}</p>
+      <p><strong>Số Điện Thoại:</strong> {{selectedDoctor.phone}}</p>
+      <p><strong>Số Giấy Phép:</strong> {{selectedDoctor.licenseNumber}}</p>
+      <p><strong>Trạng Thái:</strong> {{selectedDoctor.isActive ? 'Hoạt Động' : 'Không Hoạt Động'}}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button color="accent" (click)="hireDoctor(selectedDoctor.doctorId)">Thuê Bác Sĩ</button>
+      <button mat-button (click)="selectedDoctor = null">Đóng</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

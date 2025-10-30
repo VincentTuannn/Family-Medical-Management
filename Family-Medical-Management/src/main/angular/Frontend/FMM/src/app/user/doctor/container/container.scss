@@ -1,0 +1,42 @@
+.doctor-container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h2 {
+    color: #4EC7C0;  // Màu header của bạn
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 1rem;
+  }
+
+  table {
+    width: 100%;
+    min-width: 600px;
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+    }
+
+    @media (max-width: 768px) {
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  }
+
+  .doctor-detail-card {
+    margin-top: 2rem;
+
+    mat-card-header {
+      background-color: #f8f9fa;
+    }
+
+    p {
+      margin: 0.5rem 0;
+    }
+  }
+}
