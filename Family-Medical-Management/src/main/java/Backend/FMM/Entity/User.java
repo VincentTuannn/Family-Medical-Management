@@ -40,7 +40,18 @@ public class User {
     private Role role = Role.USER;
 
     @Column(name = "is_active")
-    private Boolean isActive = true;
+    private boolean isActive = true;
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    @PrePersist  // Tự set createdAt khi save
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = new Timestamp(System.currentTimeMillis());
+        }
+    }
 
     public enum Role {
         USER, DOCTOR, ADMIN

@@ -1,15 +1,26 @@
 <header class="app-header">
   <div class="header-content">
-    <span class="brand">Family Medical Management</span>
-    <!-- Hamburger icon -->
-    <button mat-icon-button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu">
-      <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>
-    </button>
+    <span class="brand" routerLink="/dashboard">Medical Family</span>
+
+    <!-- Nếu đã login: Hiển thị menu, nếu chưa: Hiển thị login button -->
+    <ng-container *ngIf="authService.isLoggedIn(); else loginSection">
+      <ul class="nav-links-desktop">
+        <!-- ... nav links ... -->
+      </ul>
+      <button mat-icon-button class="menu-toggle" (click)="toggleMenu()" aria-label="Toggle menu">
+        <mat-icon>{{ isOpen ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </ng-container>
+
+    <!-- Section cho chưa login -->
+    <ng-template #loginSection>
+      <button mat-raised-button color="primary" routerLink="/login">Đăng Nhập</button>
+    </ng-template>
   </div>
 </header>
 
-<!-- Import và sử dụng MenuComponent -->
-<app-menu [isOpen]="isOpen" (isOpenChange)="isOpen = $event"></app-menu>  
+<!-- Menu chỉ hiển thị nếu login -->
+<app-menu [isOpen]="isOpen" *ngIf="authService.isLoggedIn()"></app-menu>
 
 <main class="main-content">
   <router-outlet></router-outlet>

@@ -1,0 +1,32 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Đăng Nhập</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username">
+          <mat-error *ngIf="loginForm.get('username')?.invalid">Username bắt buộc</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password">
+          <mat-error *ngIf="loginForm.get('password')?.invalid">Password ít nhất 6 ký tự</mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid" class="login-btn">
+          Đăng Nhập
+        </button>
+      </form>
+
+      <!-- Nút chuyển hướng đến đăng ký -->
+      <div class="register-link">
+        <p>Chưa có tài khoản?</p>
+        <button mat-button color="accent" (click)="navigateToRegister()">Đăng Ký Ngay</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

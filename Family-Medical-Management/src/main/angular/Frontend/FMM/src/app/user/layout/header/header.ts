@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Menu } from '../menu/menu';
+import { AuthService } from '../../../features/service/auth-service/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +16,7 @@ import { Menu } from '../menu/menu';
 export class Header {
   isOpen = false;  // Trạng thái mở/đóng sidebar
 
-  constructor() {}
+  constructor(public authService: AuthService) {}
 
   toggleMenu() {
     this.isOpen = !this.isOpen;  // Toggle khi click hamburger
@@ -26,7 +27,7 @@ export class Header {
   }
 
   logout() {
-    // Gọi AuthService.logout() nếu có
+    this.authService.logout();
     this.closeMenu();
   }
 }
