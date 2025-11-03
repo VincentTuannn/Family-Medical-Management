@@ -4,6 +4,7 @@ import Backend.FMM.DTO.PatientDTO;
 import Backend.FMM.DTO.UserDTO;
 import Backend.FMM.Entity.Patient;
 import Backend.FMM.Repository.PatientRepository;
+import Backend.FMM.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +17,20 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
 
-    public PatientDTO save(PatientDTO dto) {
+	@Autowired
+	private UserRepository userRepository;
+
+	public PatientDTO save(PatientDTO dto) {
         Patient patient = new Patient();
         patient.setFullName(dto.getFullName());
         patient.setDateOfBirth(dto.getDateOfBirth());
         patient.setGender(Patient.Gender.valueOf(dto.getGender()));
         patient.setBloodType(dto.getBloodType());
         patient.setEmergencyContact(dto.getEmergencyContact());
-        // Set user từ DTO hoặc logic khác
+		// Set user từ DTO nếu có
+		if (dto.getUserId() != null) {
+			userRepository.findById(dto.getUserId()).ifPresent(patient::setUser);
+		}
         Patient savedPatient = patientRepository.save(patient);
         return toDTO(savedPatient);
     }
@@ -44,9 +51,11 @@ public class PatientService {
         patientRepository.deleteById(id);
     }
 
-    private PatientDTO toDTO(Patient patient) {
-        return new PatientDTO(patient.getPatientId(), patient.getUser().getUserId(), patient.getFullName(),
-                patient.getDateOfBirth(), patient.getGender().name(), patient.getBloodType(), patient.getEmergencyContact(),
-                patient.getCreatedAt());
+	private PatientDTO toDTO(Patient patient) {
+		Integer userId = patient.getUser() != null ? patient.getUser().getUserId() : null;
+		String gender = patient.getGender() != null ? patient.getGender().name() : null;
+		return new PatientDTO(patient.getPatientId(), userId, patient.getFullName(),
+				patient.getDateOfBirth(), gender, patient.getBloodType(), patient.getEmergencyContact(),
+				patient.getCreatedAt());
     }
 }

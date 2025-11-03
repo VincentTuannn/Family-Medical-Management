@@ -45,7 +45,7 @@ public class AuthController {
             newUser.setPhone(dto.getPhone());
             newUser.setAddress(dto.getAddress());
             newUser.setRole(User.Role.USER);
-            newUser.setIsActive(true);
+            newUser.setActive(true);
             User saved = userRepository.save(newUser);
             return ResponseEntity.ok(saved);
         } catch (Exception e) {

@@ -12,8 +12,8 @@ export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
-    { path: 'dashboard', component: DashboardContainer, canActivate: [authGuard] },
-    { path: 'patients', component: PatientContainer, canActivate: [authGuard] },
-    { path: 'doctor', component: DoctorContainer, canActivate: [authGuard] },
+    { path: 'dashboard', component: DashboardContainer}, //canActivate: [authGuard] },
+    { path: 'patients', component: PatientContainer}, //canActivate: [authGuard] },
+    { path: 'doctor', component: DoctorContainer}, //canActivate: [authGuard] },
     { path: '**', redirectTo: '/login' }
 ];

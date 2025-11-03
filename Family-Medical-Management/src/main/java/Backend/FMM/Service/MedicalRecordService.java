@@ -3,6 +3,7 @@ package Backend.FMM.Service;
 import Backend.FMM.DTO.MedicalRecordDTO;
 import Backend.FMM.Entity.MedicalRecord;
 import Backend.FMM.Repository.MedicalRecordRepository;
+import Backend.FMM.Repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,10 @@ public class MedicalRecordService {
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
-    public MedicalRecordDTO save(MedicalRecordDTO dto) {
+	@Autowired
+	private PatientRepository patientRepository;
+
+	public MedicalRecordDTO save(MedicalRecordDTO dto) {
         MedicalRecord record = new MedicalRecord();
         record.setDiagnosis(dto.getDiagnosis());
         record.setTreatment(dto.getTreatment());
@@ -24,7 +28,10 @@ public class MedicalRecordService {
         record.setNotes(dto.getNotes());
         record.setRecordDate(dto.getRecordDate());
         record.setDoctorName(dto.getDoctorName());
-        // Set patient từ DTO hoặc logic
+		// Set patient từ DTO nếu có
+		if (dto.getPatientId() != null) {
+			patientRepository.findById(dto.getPatientId()).ifPresent(record::setPatient);
+		}
         MedicalRecord savedRecord = medicalRecordRepository.save(record);
         return toDTO(savedRecord);
     }
@@ -45,9 +52,10 @@ public class MedicalRecordService {
         medicalRecordRepository.deleteById(id);
     }
 
-    private MedicalRecordDTO toDTO(MedicalRecord record) {
-        return new MedicalRecordDTO(record.getRecordId(), record.getPatient().getPatientId(), record.getDiagnosis(),
-                record.getTreatment(), record.getMedications(), record.getAllergies(), record.getNotes(),
-                record.getRecordDate(), record.getDoctorName());
+	private MedicalRecordDTO toDTO(MedicalRecord record) {
+		Integer patientId = record.getPatient() != null ? record.getPatient().getPatientId() : null;
+		return new MedicalRecordDTO(record.getRecordId(), patientId, record.getDiagnosis(),
+				record.getTreatment(), record.getMedications(), record.getAllergies(), record.getNotes(),
+				record.getRecordDate(), record.getDoctorName());
     }
 }

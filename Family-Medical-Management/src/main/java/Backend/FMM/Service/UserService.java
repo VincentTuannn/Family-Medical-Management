@@ -27,7 +27,7 @@ public class UserService {
         user.setPhone(dto.getPhone());
         user.setAddress(dto.getAddress());
         user.setRole(User.Role.valueOf(dto.getRole()));
-        user.setIsActive(dto.getIsActive());
+        user.setActive(dto.getIsActive());
         User savedUser = userRepository.save(user);
         return toDTO(savedUser);
     }
@@ -50,6 +50,6 @@ public class UserService {
 
     private UserDTO toDTO(User user) {
         return new UserDTO(user.getUserId(), user.getUsername(), user.getEmail(), user.getPassword(),
-                user.getPhone(), user.getAddress(), user.getCreatedAt(), user.getRole().name(), user.getIsActive());
+                user.getPhone(), user.getAddress(), user.getCreatedAt(), user.getRole().name(), user.isActive());
     }
 }

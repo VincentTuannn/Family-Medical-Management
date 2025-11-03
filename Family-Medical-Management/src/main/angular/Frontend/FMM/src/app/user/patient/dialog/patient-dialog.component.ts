@@ -15,9 +15,9 @@ import { PatientDTO } from '../../../features/model/patient.model';
     MatInputModule, 
     MatSelectModule, 
     FormsModule,
-    MatDialogContent,  // Import cho <mat-dialog-content>
-    MatDialogActions,  // Import cho <mat-dialog-actions>
-    MatDialogClose  // Import cho [mat-dialog-close]
+    MatDialogContent,  
+    MatDialogActions,  
+    MatDialogClose  
   ],
   template: `
     <h2 mat-dialog-title>{{ data.action === 'create' ? 'Thêm Bệnh Nhân' : 'Sửa Bệnh Nhân' }}</h2>
@@ -64,7 +64,7 @@ export class PatientDialogComponent {
     gender: 'male',
     bloodType: '',
     emergencyContact: '',
-    createdAt: new Date()  // Thêm default để fix missing property (hoặc làm optional trong model)
+    createdAt: new Date()  
   };
 
   constructor(
@@ -72,7 +72,7 @@ export class PatientDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { action: 'create' | 'edit'; patient?: PatientDTO }
   ) {
     if (this.data.patient) {
-      this.patient = { ...this.data.patient, createdAt: new Date() };  // Copy và set createdAt nếu cần
+      this.patient = { ...this.data.patient, createdAt: new Date() };  
     }
   }
 }

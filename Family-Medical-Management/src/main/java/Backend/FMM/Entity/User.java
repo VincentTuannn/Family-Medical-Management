@@ -42,9 +42,9 @@ public class User {
     @Column(name = "is_active")
     private boolean isActive = true;
 
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
-    }
+//    public void setIsActive(boolean isActive) {
+//        this.isActive = isActive;
+//    }
 
     @PrePersist  // Tự set createdAt khi save
     protected void onCreate() {

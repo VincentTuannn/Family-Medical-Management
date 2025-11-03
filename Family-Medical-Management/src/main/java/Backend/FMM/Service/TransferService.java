@@ -2,6 +2,9 @@ package Backend.FMM.Service;
 
 import Backend.FMM.DTO.TransferDTO;
 import Backend.FMM.Entity.Transfer;
+import Backend.FMM.Repository.UserRepository;
+import Backend.FMM.Repository.PatientRepository;
+import Backend.FMM.Repository.DoctorRepository;
 import Backend.FMM.Repository.TransferRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +19,27 @@ public class TransferService {
     @Autowired
     private TransferRepository transferRepository;
 
-    public TransferDTO save(TransferDTO dto) {
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private PatientRepository patientRepository;
+
+	@Autowired
+	private DoctorRepository doctorRepository;
+
+	public TransferDTO save(TransferDTO dto) {
         Transfer transfer = new Transfer();
-        // Set user, patient, doctor từ logic (e.g., từ auth)
+		// Set user, patient, doctor từ DTO nếu có
+		if (dto.getUserId() != null) {
+			userRepository.findById(dto.getUserId()).ifPresent(transfer::setUser);
+		}
+		if (dto.getPatientId() != null) {
+			patientRepository.findById(dto.getPatientId()).ifPresent(transfer::setPatient);
+		}
+		if (dto.getDoctorId() != null) {
+			doctorRepository.findById(dto.getDoctorId()).ifPresent(transfer::setDoctor);
+		}
         transfer.setRecordIds(dto.getRecordIds().toString());  // Chuyển List sang JSON string
         transfer.setAccessType(Transfer.AccessType.valueOf(dto.getAccessType()));
         transfer.setExpiresAt(new Timestamp(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L));  // Hết hạn sau 7 ngày
@@ -44,10 +65,10 @@ public class TransferService {
     }
 
     // Business logic: Check hết hạn
-    public boolean isExpired(Integer transferId) {
-        Optional<Transfer> transfer = transferRepository.findById(transferId);
-        return transfer.map(t -> t.getExpiresAt().before(new Timestamp(System.currentTimeMillis()))).orElse(true);
-    }
+	public boolean isExpired(Integer transferId) {
+		Optional<Transfer> transfer = transferRepository.findById(transferId);
+		return transfer.map(t -> t.getExpiresAt() != null && t.getExpiresAt().before(new Timestamp(System.currentTimeMillis()))).orElse(true);
+	}
 
     private TransferDTO toDTO(Transfer transfer) {
         // Parse recordIds from JSON string to List<Integer>
@@ -74,8 +95,13 @@ public class TransferService {
         java.sql.Date transferredAtDate = transfer.getTransferredAt() != null ? 
             new java.sql.Date(transfer.getTransferredAt().getTime()) : null;
             
-        return new TransferDTO(transfer.getTransferId(), transfer.getUser().getUserId(), transfer.getPatient().getPatientId(),
-                transfer.getDoctor().getDoctorId(), recordIds, transfer.getAccessType().name(), expiresAtDate,
-                transfer.getStatus().name(), transferredAtDate);
+		Integer userId = transfer.getUser() != null ? transfer.getUser().getUserId() : null;
+		Integer patientId = transfer.getPatient() != null ? transfer.getPatient().getPatientId() : null;
+		Integer doctorId = transfer.getDoctor() != null ? transfer.getDoctor().getDoctorId() : null;
+		String accessType = transfer.getAccessType() != null ? transfer.getAccessType().name() : null;
+		String status = transfer.getStatus() != null ? transfer.getStatus().name() : null;
+		return new TransferDTO(transfer.getTransferId(), userId, patientId,
+				doctorId, recordIds, accessType, expiresAtDate,
+				status, transferredAtDate);
     }
 }
