@@ -2,6 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
+
+interface JwtPayload {  
+  sub: string;  // Username
+  userId: number;  // ID user từ token
+}
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +43,19 @@ export class AuthService {
 
   getToken(): string | null {
     return this.tokenSubject.value;
+  }
+
+  getUserId(): number | null {
+    const token = this.getToken();
+    if (token) {
+      try {
+        const payload: JwtPayload = jwtDecode(token);
+        return payload.userId;  // Giả định token có claim 'userId' từ backend
+      } catch (error) {
+        console.error('Lỗi decode token:', error);
+        return null;
+      }
+    }
+    return null;
   }
 }

@@ -48,6 +48,11 @@ public class UserService {
         return userRepository.findByEmail(email).map(this::toDTO);
     }
 
+    public void testDB() {
+        List<User> users = userRepository.findAll();
+        System.out.println("Số users: " + users.size());  // Log số lượng
+    }
+
     private UserDTO toDTO(User user) {
         return new UserDTO(user.getUserId(), user.getUsername(), user.getEmail(), user.getPassword(),
                 user.getPhone(), user.getAddress(), user.getCreatedAt(), user.getRole().name(), user.isActive());

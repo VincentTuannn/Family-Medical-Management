@@ -47,4 +47,9 @@ public class UserController {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/test-db")
+    public String test() {
+        userService.testDB(); return "OK";
+    }
 }

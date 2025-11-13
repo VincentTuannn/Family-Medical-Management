@@ -10,33 +10,56 @@
 
   p {
     color: #666;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
 
-  table {
-    width: 100%;
-    min-width: 600px;
+  .doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));  // Grid responsive, ít nhất 300px/card
+    gap: 1.5rem;
 
-    th, td {
-      padding: 1rem;
-      text-align: left;
-    }
+    .doctor-card {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
 
-    @media (max-width: 768px) {
-      overflow-x: auto;
-      white-space: nowrap;
+      mat-card-header {
+        background-color: #f8f9fa;
+        mat-card-title { color: #333; }
+        mat-card-subtitle { color: #666; }
+      }
+
+      mat-card-content p {
+        margin: 0.5rem 0;
+        line-height: 1.5;
+      }
+
+      mat-card-actions {
+        border-top: 1px solid #eee;
+      }
     }
   }
 
-  .doctor-detail-card {
-    margin-top: 2rem;
+  .no-data {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
 
-    mat-card-header {
-      background-color: #f8f9fa;
-    }
+    button { margin-top: 1rem; }
+  }
+}
 
-    p {
-      margin: 0.5rem 0;
-    }
+// Responsive mobile
+@media (max-width: 768px) {
+  .doctors-grid {
+    grid-template-columns: 1fr;  // Stack dọc
+    gap: 1rem;
+  }
+
+  .doctor-card {
+    mat-card-content p { font-size: 0.9rem; }
   }
 }

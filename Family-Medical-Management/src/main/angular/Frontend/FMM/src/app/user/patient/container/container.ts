@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';  
 import { MatDialog } from '@angular/material/dialog';
 import { PatientDialogComponent } from '../dialog/patient-dialog.component';
 import { PatientService } from '../../../features/service/patient-service/patient.service'
 import { PatientDTO } from '../../../features/model/patient.model';
+import { AuthService } from '../../../features/service/auth-service/auth.service';
 
 @Component({
   selector: 'app-container',
@@ -22,7 +23,9 @@ export class PatientContainer implements OnInit {
 
   constructor(
     private patientService: PatientService,
-    public dialog: MatDialog  // Inject MatDialog
+    public dialog: MatDialog,  // Inject MatDialog
+    private authService: AuthService,  // Import AuthService để lấy userId
+    private router: Router  // Import Router để navigate
   ) {}
 
   ngOnInit(): void {
@@ -30,13 +33,20 @@ export class PatientContainer implements OnInit {
   }
 
   loadMyPatients() {
-    // Giả định userId từ auth (e.g., localStorage hoặc AuthService)
-    const userId = 1;  // Thay bằng userId thực tế từ login
-    this.patientService.getPatientsByUserId(userId).subscribe({
-      next: (data) => this.patients = data,
-      error: (err) => console.error('Lỗi load bệnh nhân của bạn:', err)
-    });
+  const userId = this.authService.getUserId();  
+
+  if (userId === null) {
+    console.error('User ID không tồn tại, vui lòng đăng nhập lại.');
+    this.router.navigate(['/login']);  // Redirect nếu chưa login
+    return;
   }
+
+  // Bây giờ userId là number, gọi service an toàn
+  this.patientService.getPatientsByUserId(userId).subscribe({
+    next: (data) => this.patients = data,
+    error: (err) => console.error('Lỗi load bệnh nhân của bạn:', err)
+  });
+}
 
   createPatient() {
       // Mở dialog/form thêm mới (giả định có PatientDialogComponent)
@@ -60,14 +70,12 @@ export class PatientContainer implements OnInit {
     }
 
   viewPatientDetail(id: number) {
-    // Navigate đến chi tiết bệnh nhân
-    // Ví dụ: Mở dialog hoặc route đến /patient/{id}
+    this.router.navigate(['/patient', id]);  // Navigate đến trang chi tiết bệnh nhân
     console.log('Xem chi tiết bệnh nhân ID:', id);
   }
 
   requestTransfer(id: number) {
-    // Navigate đến trang transfer cho bệnh nhân này
+    this.router.navigate(['/transfers', id]);  // Navigate đến trang chuyển hồ sơ cho bệnh nhân
     console.log('Yêu cầu chuyển hồ sơ bệnh nhân ID:', id);
-    // Ví dụ: this.router.navigate(['/transfers', id]);
   }
 }

@@ -6,7 +6,7 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
@@ -25,14 +25,16 @@
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="a048f529-4354-48fc-8e63-8bf57c68d222">
       <console name="Connection" type="STANDARD" schema="medical_family_db" session="Main"><![CDATA[use medical_family_db;
-select * from `user`;]]></console>
+select * from `doctor`;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="a048f529-4354-48fc-8e63-8bf57c68d222" object-ref="consoles/Connection" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="a048f529-4354-48fc-8e63-8bf57c68d222" />
