@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../features/service/auth-service/auth.service';
 
 @Component({
   selector: 'app-menu',
@@ -25,7 +26,7 @@ export class Menu {
     { path: '/appointments', icon: 'event', label: 'Lịch Hẹn' }
   ];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     // Listener navigation để tự động close menu khi navigate
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -50,7 +51,8 @@ export class Menu {
   }
 
   logout() {
-    // Gọi AuthService.logout() nếu có
-    console.log('Logout clicked');
+    this.authService.logout();
+    this.closeMenu();
+    this.router.navigate(['/login']);
   }
 }

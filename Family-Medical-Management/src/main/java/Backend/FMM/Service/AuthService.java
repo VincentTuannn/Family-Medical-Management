@@ -46,7 +46,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(username, password)
         );
 
-        // Generate JWT token
-        return jwtUtil.generateToken(username);
+        // Generate JWT token với userId
+        return jwtUtil.generateToken(authentication, user.getUserId());
     }
 }

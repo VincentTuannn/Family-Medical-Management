@@ -32,9 +32,7 @@ select * from `doctor`;]]></console>
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="a048f529-4354-48fc-8e63-8bf57c68d222" object-ref="consoles/Connection" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="a048f529-4354-48fc-8e63-8bf57c68d222" />

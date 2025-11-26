@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `user` (
     phone VARCHAR(20) NOT NULL,
     address TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    role ENUM('user', 'doctor', 'admin') NOT NULL DEFAULT 'user',
+    role ENUM('USER', 'DOCTOR', 'ADMIN') NOT NULL DEFAULT 'USER',
     is_active BOOLEAN DEFAULT TRUE
 ) ENGINE=InnoDB;
 

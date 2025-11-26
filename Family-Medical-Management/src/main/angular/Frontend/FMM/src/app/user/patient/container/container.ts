@@ -57,10 +57,27 @@ export class PatientContainer implements OnInit {
   
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
+          // Lấy userId từ authService và thêm vào patient data
+          const userId = this.authService.getUserId();
+          if (userId === null) {
+            console.error('User ID không tồn tại');
+            this.router.navigate(['/login']);
+            return;
+          }
+          
+          // Format date và thêm userId
+          const patientData = {
+            ...result,
+            userId: userId,
+            dateOfBirth: typeof result.dateOfBirth === 'string' 
+              ? new Date(result.dateOfBirth) 
+              : result.dateOfBirth
+          };
+          
           // Gọi API tạo
-          this.patientService.createPatient(result).subscribe({
+          this.patientService.createPatient(patientData).subscribe({
             next: (newPatient) => {
-              this.patients.push(newPatient);  // Thêm vào list
+              this.loadMyPatients();  // Reload danh sách
               console.log('Tạo bệnh nhân thành công:', newPatient);
             },
             error: (err) => console.error('Lỗi tạo patient:', err)

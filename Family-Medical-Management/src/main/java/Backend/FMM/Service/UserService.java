@@ -26,7 +26,16 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));  // Encode mật khẩu
         user.setPhone(dto.getPhone());
         user.setAddress(dto.getAddress());
-        user.setRole(User.Role.valueOf(dto.getRole()));
+        // Xử lý role không phân biệt chữ hoa/thường
+        if (dto.getRole() != null) {
+            try {
+                user.setRole(User.Role.valueOf(dto.getRole().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                user.setRole(User.Role.USER); // Default role nếu không hợp lệ
+            }
+        } else {
+            user.setRole(User.Role.USER); // Default role nếu null
+        }
         user.setActive(dto.getIsActive());
         User savedUser = userRepository.save(user);
         return toDTO(savedUser);

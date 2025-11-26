@@ -4,15 +4,17 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
@@ -23,22 +25,30 @@ public class JwtTokenProvider {
     @Value("${app.jwt.expiration}")
     private long jwtExpirationInMs;
 
-    // 🔐 Tạo key bảo mật từ secret string
+    // Tạo key bảo mật từ secret string (Base64 encoded)
     private SecretKey getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     // Tạo JWT
-    public String generateToken(String username) {
+    public String generateToken(Authentication authentication, Integer userId) {
+        String username = authentication.getName();
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
+        // Lấy danh sách role (GrantedAuthority)
+        String roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
         return Jwts.builder()
                 .subject(username)
+                .claim("userId", userId)
+                .claim("role", roles)
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(getSignKey(), SignatureAlgorithm.HS512)
+                .signWith(getSignKey())
                 .compact();
     }
 

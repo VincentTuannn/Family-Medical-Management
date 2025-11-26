@@ -72,7 +72,43 @@ export class PatientDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { action: 'create' | 'edit'; patient?: PatientDTO }
   ) {
     if (this.data.patient) {
-      this.patient = { ...this.data.patient, createdAt: new Date() };  
+      // Convert dateOfBirth từ string hoặc Date object thành Date
+      const dateOfBirth = this.data.patient.dateOfBirth 
+        ? (typeof this.data.patient.dateOfBirth === 'string' 
+            ? new Date(this.data.patient.dateOfBirth) 
+            : this.data.patient.dateOfBirth)
+        : new Date();
+      
+      this.patient = { 
+        ...this.data.patient, 
+        dateOfBirth: dateOfBirth,
+        createdAt: this.data.patient.createdAt ? new Date(this.data.patient.createdAt as any) : new Date()
+      };
+      
+      // Format dateOfBirth thành yyyy-MM-dd cho input type="date"
+      if (this.patient.dateOfBirth instanceof Date) {
+        const year = this.patient.dateOfBirth.getFullYear();
+        const month = String(this.patient.dateOfBirth.getMonth() + 1).padStart(2, '0');
+        const day = String(this.patient.dateOfBirth.getDate()).padStart(2, '0');
+        // Tạo một object mới với dateOfBirth là string
+        this.patient = { ...this.patient, dateOfBirth: `${year}-${month}-${day}` as any };
+      }
+    } else {
+      // Format default date thành yyyy-MM-dd
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      this.patient.dateOfBirth = `${year}-${month}-${day}` as any;
     }
+  }
+  
+  // Convert dateOfBirth từ string (yyyy-MM-dd) về Date object khi submit
+  getFormattedPatient(): PatientDTO {
+    const formatted = { ...this.patient };
+    if (typeof formatted.dateOfBirth === 'string') {
+      formatted.dateOfBirth = new Date(formatted.dateOfBirth);
+    }
+    return formatted;
   }
 }
