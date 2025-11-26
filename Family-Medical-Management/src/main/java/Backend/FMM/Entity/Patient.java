@@ -42,6 +42,20 @@ public class Patient {
     private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
     public enum Gender {
-        MALE, FEMALE, OTHER
+        MALE, FEMALE, OTHER;
+
+        @com.fasterxml.jackson.annotation.JsonCreator
+        public static Gender fromString(String value) {
+            if (value == null) {
+                return MALE; // Default gender
+            }
+            try {
+                // Chuyển chữ thường thành chữ hoa và parse
+                return Gender.valueOf(value.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Nếu không tìm thấy, trả về MALE làm mặc định
+                return MALE;
+            }
+        }
     }
 }

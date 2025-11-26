@@ -13,7 +13,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         Authorization: `Bearer ${token}`
       }
     });
+    console.log('Interceptor: Đã thêm token vào request:', req.url);
     return next(cloned);
+  } else {
+    console.warn('Interceptor: Không có token cho request:', req.url);
   }
 
   return next(req);

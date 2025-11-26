@@ -31,14 +31,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = getJWTFromRequest(request);
 
         if (jwt != null && tokenProvider.validateToken(jwt)) {
-            String username = tokenProvider.getUsernameFromJWT(jwt);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            try {
+                String username = tokenProvider.getUsernameFromJWT(jwt);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                
+                // Debug log
+                System.out.println("✓ Authentication set cho user: " + username + 
+                    ", Authorities: " + userDetails.getAuthorities() + 
+                    ", Request: " + request.getRequestURI());
+            } catch (Exception e) {
+                System.err.println("✗ Lỗi xử lý JWT token: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            // Log để debug - chỉ log khi không có token hoặc token không hợp lệ
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader == null) {
+                System.out.println("✗ Request đến " + request.getRequestURI() + " không có Authorization header");
+            } else if (!authHeader.startsWith("Bearer ")) {
+                System.out.println("✗ Request đến " + request.getRequestURI() + " có Authorization header nhưng không đúng format: " + authHeader.substring(0, Math.min(20, authHeader.length())));
+            } else if (jwt != null && !tokenProvider.validateToken(jwt)) {
+                System.out.println("✗ Request đến " + request.getRequestURI() + " có token nhưng không hợp lệ");
+            }
         }
 
         filterChain.doFilter(request, response);

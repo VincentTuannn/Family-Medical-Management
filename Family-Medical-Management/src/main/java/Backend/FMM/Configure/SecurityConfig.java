@@ -32,9 +32,6 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;   // để Spring tự inject
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -63,10 +60,16 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/public/health").permitAll()
+                        .requestMatchers("/api/public/test-auth").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/doctor/**").hasAnyRole("DOCTOR", "ADMIN")
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
+                        .requestMatchers("/api/patient/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
+                        .requestMatchers("/api/appointment/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
+                        .requestMatchers("/api/transfer/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
+                        .requestMatchers("/api/medical-record/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
+                        .requestMatchers("/api/audit-log/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 // KHÔNG gọi new JwtAuthenticationFilter(), mà inject autowired filter

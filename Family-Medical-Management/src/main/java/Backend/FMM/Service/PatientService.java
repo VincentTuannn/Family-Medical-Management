@@ -1,7 +1,6 @@
 package Backend.FMM.Service;
 
 import Backend.FMM.DTO.PatientDTO;
-import Backend.FMM.DTO.UserDTO;
 import Backend.FMM.Entity.Patient;
 import Backend.FMM.Repository.PatientRepository;
 import Backend.FMM.Repository.UserRepository;
@@ -24,7 +23,18 @@ public class PatientService {
         Patient patient = new Patient();
         patient.setFullName(dto.getFullName());
         patient.setDateOfBirth(dto.getDateOfBirth());
-        patient.setGender(Patient.Gender.valueOf(dto.getGender()));
+        
+        // Xử lý gender không phân biệt chữ hoa/thường
+        if (dto.getGender() != null) {
+            try {
+                patient.setGender(Patient.Gender.valueOf(dto.getGender().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                patient.setGender(Patient.Gender.MALE); // Default nếu không hợp lệ
+            }
+        } else {
+            patient.setGender(Patient.Gender.MALE); // Default nếu null
+        }
+        
         patient.setBloodType(dto.getBloodType());
         patient.setEmergencyContact(dto.getEmergencyContact());
 		// Set user từ DTO nếu có
