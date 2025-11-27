@@ -74,3 +74,4 @@ Sau khi navigate đến `/patients`, xem backend logs có:
 
 **Hãy navigate đến trang `/patients` và test lại!**
 
+

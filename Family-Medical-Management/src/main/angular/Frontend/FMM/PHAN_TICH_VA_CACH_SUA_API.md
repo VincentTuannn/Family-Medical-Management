@@ -238,3 +238,4 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
    - User phải có role USER, DOCTOR, hoặc ADMIN
    - Xem trong database hoặc token JWT
 
+

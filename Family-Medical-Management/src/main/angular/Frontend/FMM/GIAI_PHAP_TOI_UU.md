@@ -247,3 +247,4 @@ getAIStream(prompt: string): Observable<any> {
 - ✅ Tương lai: Hỗ trợ Spring AI, Kafka, streaming dễ dàng
 - ✅ Không ảnh hưởng: Code hiện tại hoạt động tốt hơn
 
+
