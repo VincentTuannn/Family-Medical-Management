@@ -84,7 +84,43 @@
 			<artifactId>lombok</artifactId>
 			<version>1.18.36</version>
 		</dependency>
+		
+		<!-- Spring AI Dependencies -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+			<version>1.0.0-M4</version>
+		</dependency>
+		<!-- Tika for document parsing (PDF, Word, etc.) -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-tika-document-reader</artifactId>
+			<version>1.0.0-M4</version>
+		</dependency>
+		<!-- OpenAI Embeddings (free tier available) or use Ollama embeddings -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+			<version>1.0.0-M4</version>
+		</dependency>
+		<!-- For text chunking and tokenization -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-core</artifactId>
+			<version>1.0.0-M4</version>
+		</dependency>
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>

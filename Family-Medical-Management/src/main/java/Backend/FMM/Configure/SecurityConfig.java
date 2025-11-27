@@ -71,6 +71,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/appointment/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
                         .requestMatchers("/api/transfer/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
                         .requestMatchers("/api/medical-record/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
+                        .requestMatchers("/api/ai/**").hasAnyRole("USER", "DOCTOR", "ADMIN")
                         .requestMatchers("/api/audit-log/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )

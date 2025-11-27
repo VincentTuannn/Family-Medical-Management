@@ -21,8 +21,8 @@ export class Menu {
     { path: '/dashboard', icon: 'dashboard', label: 'Trang Chủ' },
     { path: '/patients', icon: 'people', label: 'Bệnh Nhân' },
     { path: '/doctor', icon: 'medical_services', label: 'Bác Sĩ' },
-    { path: '/transfers', icon: 'share', label: 'Chia Sẻ' },
-    { path: '/appointments', icon: 'event', label: 'Lịch Hẹn' }
+    { path: '/appointments', icon: 'event', label: 'Lịch Hẹn' },
+    { path: '/chat', icon: 'smart_toy', label: 'AI Trợ Lý' }
   ];
 
   constructor(private router: Router, private authService: AuthService) {

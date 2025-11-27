@@ -20,7 +20,7 @@
         <ng-container matColumnDef="appointmentDate">
           <th mat-header-cell *matHeaderCellDef>Ngày Giờ Hẹn</th>
           <td mat-cell *matCellDef="let item">
-            {{ item.appointment.appointmentDate | date:'dd/MM/yyyy HH:mm' }}
+            {{ item.appointment.appointmentDate | date:'dd/MM/yyyy h:mm a' }}
           </td>
         </ng-container>
 

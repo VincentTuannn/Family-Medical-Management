@@ -1,0 +1,120 @@
+<div class="chat-container">
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">smart_toy</mat-icon>
+      <div>
+        <h2>Trợ Lý AI Y Tế</h2>
+        <p class="subtitle">{{ useRAG ? 'Đang sử dụng RAG (tài liệu của bạn)' : 'Chat thường' }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-icon-button (click)="toggleDocuments()" matTooltip="Tài liệu">
+        <mat-icon>folder</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleRAG()" [color]="useRAG ? 'primary' : ''" matTooltip="Bật/Tắt RAG">
+        <mat-icon>{{ useRAG ? 'auto_awesome' : 'chat' }}</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Documents Panel -->
+  <div class="documents-panel" *ngIf="showDocuments">
+    <div class="panel-header">
+      <h3>Tài liệu của bạn</h3>
+      <button mat-icon-button (click)="showDocuments = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="documents-list">
+      <div *ngIf="documents.length === 0" class="empty-state">
+        <mat-icon>description</mat-icon>
+        <p>Chưa có tài liệu nào</p>
+        <p class="hint">Upload tài liệu để sử dụng RAG</p>
+      </div>
+      <div *ngFor="let doc of documents" class="document-item">
+        <mat-icon>description</mat-icon>
+        <div class="doc-info">
+          <strong>{{ doc.fileName }}</strong>
+          <span class="doc-meta">{{ doc.fileType }} • {{ doc.createdAt | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <button mat-icon-button (click)="deleteDocument(doc.documentId!)" color="warn">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages Area -->
+  <div class="messages-area" #messagesContainer>
+    <div *ngFor="let message of messages" class="message" [class.user-message]="message.isUser" [class.ai-message]="!message.isUser">
+      <div class="message-avatar">
+        <mat-icon *ngIf="message.isUser">person</mat-icon>
+        <mat-icon *ngIf="!message.isUser">smart_toy</mat-icon>
+      </div>
+      <div class="message-content">
+        <div class="message-header">
+          <span class="message-author">{{ message.isUser ? 'Bạn' : 'AI Trợ Lý' }}</span>
+          <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+        </div>
+        <div class="message-text" [innerHTML]="message.content | nl2br"></div>
+        
+        <!-- Loading indicator -->
+        <div *ngIf="message.loading" class="loading-indicator">
+          <mat-spinner diameter="20"></mat-spinner>
+        </div>
+
+        <!-- Sources (if RAG was used) -->
+        <div *ngIf="message.usedRAG && message.sources && message.sources.length > 0" class="message-sources">
+          <mat-icon>source</mat-icon>
+          <span>Nguồn: </span>
+          <div class="sources-chips">
+            <span *ngFor="let source of message.sources" class="source-chip">{{ source }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-area">
+    <div class="input-container">
+      <button mat-icon-button (click)="fileInput.click()" [disabled]="isUploading" matTooltip="Upload tài liệu">
+        <mat-icon *ngIf="!isUploading">attach_file</mat-icon>
+        <mat-spinner *ngIf="isUploading" diameter="24"></mat-spinner>
+      </button>
+      <input 
+        #fileInput
+        type="file" 
+        (change)="onFileSelected($event)"
+        accept=".pdf,.doc,.docx,.txt"
+        style="display: none"
+      />
+      
+      <mat-form-field appearance="outline" class="message-input">
+        <mat-label>Nhập câu hỏi của bạn...</mat-label>
+        <textarea 
+          matInput 
+          [(ngModel)]="currentMessage"
+          (keydown.enter)="$event.preventDefault(); sendMessage()"
+          [disabled]="isLoading"
+          rows="1">
+        </textarea>
+      </mat-form-field>
+      
+      <button 
+        mat-fab 
+        color="primary" 
+        (click)="sendMessage()"
+        [disabled]="!currentMessage.trim() || isLoading"
+        matTooltip="Gửi tin nhắn">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+    <div class="input-hint">
+      <mat-icon>info</mat-icon>
+      <span>Nhấn Enter để gửi • Upload tài liệu để sử dụng RAG</span>
+    </div>
+  </div>
+</div>
+

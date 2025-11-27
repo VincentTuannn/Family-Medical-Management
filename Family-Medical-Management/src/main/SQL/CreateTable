@@ -140,5 +140,25 @@ CREATE INDEX idx_user_id_audit ON audit_log(user_id);
 CREATE INDEX idx_action ON audit_log(action);
 CREATE INDEX idx_created_at ON audit_log(created_at);
 
+-- Bảng document (for AI RAG)
+CREATE TABLE IF NOT EXISTS document (
+    document_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    file_name VARCHAR(255) NOT NULL,
+    file_type VARCHAR(50),
+    content LONGTEXT,
+    embedding LONGTEXT, -- JSON array of floats
+    chunk_index INT DEFAULT 0,
+    metadata TEXT, -- JSON metadata
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_document_user FOREIGN KEY (user_id)
+        REFERENCES `user`(user_id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE INDEX idx_user_id_document ON document(user_id);
+CREATE INDEX idx_file_name ON document(file_name);
+CREATE INDEX idx_created_at_document ON document(created_at);
+
 -- Kiểm tra các bảng đã tạo
 SHOW TABLES;

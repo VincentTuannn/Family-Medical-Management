@@ -25,11 +25,39 @@ export class AppointmentService {
   }
 
   createAppointment(appointment: AppointmentDTO): Observable<AppointmentDTO> {
-    return this.http.post<AppointmentDTO>(this.apiUrl, appointment);
+    // Format appointmentDate thành ISO string với local timezone để tránh bị convert sai
+    const formattedAppointment = this.formatAppointmentForRequest(appointment);
+    return this.http.post<AppointmentDTO>(this.apiUrl, formattedAppointment);
   }
 
   updateAppointment(id: number, appointment: AppointmentDTO): Observable<AppointmentDTO> {
-    return this.http.put<AppointmentDTO>(`${this.apiUrl}/${id}`, appointment);
+    // Format appointmentDate thành ISO string với local timezone để tránh bị convert sai
+    const formattedAppointment = this.formatAppointmentForRequest(appointment);
+    return this.http.put<AppointmentDTO>(`${this.apiUrl}/${id}`, formattedAppointment);
+  }
+
+  /**
+   * Format appointment để gửi lên server, đảm bảo date/time được format đúng
+   */
+  private formatAppointmentForRequest(appointment: AppointmentDTO): any {
+    const formatted: any = { ...appointment };
+    
+    if (appointment.appointmentDate instanceof Date) {
+      // Format Date thành ISO string với local timezone
+      // Sử dụng toISOString() sẽ convert sang UTC, nên ta format thủ công
+      const date = appointment.appointmentDate;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      
+      // Format: YYYY-MM-DDTHH:mm:ss (local time, không có timezone)
+      formatted.appointmentDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    }
+    
+    return formatted;
   }
 
   deleteAppointment(id: number): Observable<void> {

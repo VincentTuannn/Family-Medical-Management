@@ -107,7 +107,8 @@ export class DashboardContainer implements OnInit, OnDestroy {
       { title: 'Bệnh Nhân', count: data.patients, icon: 'people', route: '/patients' },
       { title: 'Lịch Hẹn', count: data.appointments, icon: 'event', route: '/appointments' },
       { title: 'Chuyển Hồ Sơ', count: data.transfers, icon: 'share', route: '/transfers' },
-      { title: 'Bác Sĩ', count: data.doctors, icon: 'medical_services', route: '/doctor' }
+      { title: 'Bác Sĩ', count: data.doctors, icon: 'medical_services', route: '/doctor' },
+      { title: 'AI Trợ Lý', count: 0, icon: 'smart_toy', route: '/chat' }
     ];
     this.loading = false;
     this.cdr.detectChanges();
@@ -116,12 +117,13 @@ export class DashboardContainer implements OnInit, OnDestroy {
   private handleStatsFailure() {
     this.loading = false;
     // Fallback dữ liệu giả nếu có lỗi
-    this.stats = Array(6).fill(null).map((_, i) => ({
-      title: ['Bệnh Nhân', 'Lịch Hẹn', 'Chuyển Hồ Sơ', 'Bác Sĩ', 'Hồ Sơ Y Tế', 'Người Dùng'][i],
-      count: 0,
-      icon: ['people', 'event', 'share', 'medical_services', 'folder', 'group'][i],
-      route: ['/patients', '/appointments', '/transfers', '/doctor', '/medical-records', '/users'][i]
-    }));
+    this.stats = [
+      { title: 'Bệnh Nhân', count: 0, icon: 'people', route: '/patients' },
+      { title: 'Lịch Hẹn', count: 0, icon: 'event', route: '/appointments' },
+      { title: 'Chuyển Hồ Sơ', count: 0, icon: 'share', route: '/transfers' },
+      { title: 'Bác Sĩ', count: 0, icon: 'medical_services', route: '/doctor' },
+      { title: 'AI Trợ Lý', count: 0, icon: 'smart_toy', route: '/chat' }
+    ];
     this.cdr.detectChanges();
   }
 

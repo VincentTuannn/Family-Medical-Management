@@ -1,9 +1,10 @@
 package Backend.FMM.DTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -13,7 +14,10 @@ public class AppointmentDTO {
     private Integer patientId; //ID bệnh nhân
     private Integer doctorId; //ID bác sĩ
     private Integer transferId; //ID chuyển
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Date appointmentDate; //Ngày giờ hẹn
+    
     private String status; //Trạng thái: "SCHEDULED", "COMPLETED", "CANCELLED"
     private String notes; //Ghi chú
 }

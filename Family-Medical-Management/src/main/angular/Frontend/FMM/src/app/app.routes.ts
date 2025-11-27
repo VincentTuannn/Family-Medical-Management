@@ -11,6 +11,7 @@ import { PatientAdminContainer } from './admin/patient-admin/container/container
 import { DoctorAdminContainer } from './admin/doctor-admin/container/container';
 import { UserAdminContainer } from './admin/user-admin/container/container';
 import { AppointmentContainer } from './user/appointment/container/container';
+import { ChatContainer } from './user/chat/container/container';
 
 
 
@@ -24,6 +25,7 @@ export const routes: Routes = [
     { path: 'patients', component: PatientContainer, canActivate: [authGuard] },
     { path: 'doctor', component: DoctorContainer, canActivate: [authGuard] },
     { path: 'appointments', component: AppointmentContainer, canActivate: [authGuard] },
+    { path: 'chat', component: ChatContainer, canActivate: [authGuard] },
     // Admin routes
     { path: 'admin/patients', component: PatientAdminContainer, canActivate: [authGuard] },
     { path: 'admin/doctors', component: DoctorAdminContainer, canActivate: [authGuard] },

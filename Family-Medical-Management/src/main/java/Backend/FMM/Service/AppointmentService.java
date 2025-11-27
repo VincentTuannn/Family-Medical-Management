@@ -76,9 +76,9 @@ public class AppointmentService {
     }
 
 	private AppointmentDTO toDTO(Appointment appointment) {
-        // Convert Timestamp to Date for DTO
-		java.sql.Date appointmentDate = appointment.getAppointmentDate() != null ? 
-			new java.sql.Date(appointment.getAppointmentDate().getTime()) : null;
+        // Convert Timestamp to Date for DTO (java.util.Date để giữ cả date và time)
+		java.util.Date appointmentDate = appointment.getAppointmentDate() != null ? 
+			new java.util.Date(appointment.getAppointmentDate().getTime()) : null;
 		Integer patientId = appointment.getPatient() != null ? appointment.getPatient().getPatientId() : null;
 		Integer doctorId = appointment.getDoctor() != null ? appointment.getDoctor().getDoctorId() : null;
 		Integer transferId = appointment.getTransfer() != null ? appointment.getTransfer().getTransferId() : null;
