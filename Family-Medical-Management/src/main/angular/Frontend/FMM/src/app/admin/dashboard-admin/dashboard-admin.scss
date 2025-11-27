@@ -1,0 +1,74 @@
+.admin-dashboard {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  .page-title {
+    color: white;
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    mat-icon { font-size: 3rem; height: 3rem; width: 3rem; }
+  }
+
+  .welcome-text {
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
+  }
+
+  .admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .admin-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+    }
+
+    &.color-primary { border-left: 5px solid #3f51b5; }
+    &.color-accent { border-left: 5px solid #e91e63; }
+    &.color-warn { border-left: 5px solid #f44336; }
+
+    mat-card-header {
+      background: white;
+      padding: 1.5rem;
+
+      mat-card-title { font-size: 1.4rem; font-weight: 600; }
+      mat-card-subtitle { color: #666; font-size: 0.95rem; }
+    }
+
+    .card-content {
+      padding: 1.5rem;
+      text-align: center;
+      background: #fafafa;
+
+      button {
+        width: 100%;
+        height: 50px;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.active {
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.3) !important;
+}

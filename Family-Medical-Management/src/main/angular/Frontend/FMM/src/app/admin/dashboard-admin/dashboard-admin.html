@@ -1,0 +1,33 @@
+<div class="admin-dashboard">
+  <h1 class="page-title">
+    <mat-icon>admin_panel_settings</mat-icon>
+    Dashboard Quản Trị
+  </h1>
+
+  <p class="welcome-text">Chào mừng Admin! Chọn chức năng để quản lý hệ thống.</p>
+
+  <div class="admin-grid">
+    <mat-card 
+      *ngFor="let item of menuItems" 
+      class="admin-card" 
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      [ngClass]="'color-' + item.color">
+      
+      <mat-card-header>
+        <mat-icon mat-card-avatar [style.color]="'var(--color-' + item.color + ')'">
+          {{item.icon}}
+        </mat-icon>
+        <mat-card-title>{{item.title}}</mat-card-title>
+        <mat-card-subtitle *ngIf="item.description">{{item.description}}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content class="card-content">
+        <button mat-raised-button [color]="item.color" class="full-width">
+          <mat-icon>arrow_forward</mat-icon>
+          Truy Cập
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
