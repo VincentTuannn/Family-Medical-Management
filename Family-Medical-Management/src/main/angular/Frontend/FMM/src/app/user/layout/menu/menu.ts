@@ -18,8 +18,7 @@ export class Menu {
   @Output() isOpenChange = new EventEmitter<boolean>();
 
   menuItems = [
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full', icon: 'dashboard', label: 'Trang Chủ' },
-    // { path: '/dashboard' },
+    { path: '/dashboard', icon: 'dashboard', label: 'Trang Chủ' },
     { path: '/patients', icon: 'people', label: 'Bệnh Nhân' },
     { path: '/doctor', icon: 'medical_services', label: 'Bác Sĩ' },
     { path: '/transfers', icon: 'share', label: 'Chia Sẻ' },

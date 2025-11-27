@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -22,7 +22,8 @@ export class DoctorContainer implements OnInit {
 
   constructor(
     private doctorService: DoctorService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -31,8 +32,14 @@ export class DoctorContainer implements OnInit {
 
   loadDoctors() {
     this.doctorService.getAllDoctors().subscribe({
-      next: (data) => this.doctors = data,
-      error: (err) => console.error('Lỗi load bác sĩ:', err)
+      next: (data) => {
+        this.doctors = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Lỗi load bác sĩ:', err);
+        this.cdr.detectChanges();
+      }
     });
   }
 

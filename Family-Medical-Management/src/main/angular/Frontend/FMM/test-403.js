@@ -96,3 +96,4 @@ fetch('http://localhost:8081/api/patient/user/3', {
 
 console.log('\n✅ Test hoàn tất! Kiểm tra kết quả ở trên.');
 
+

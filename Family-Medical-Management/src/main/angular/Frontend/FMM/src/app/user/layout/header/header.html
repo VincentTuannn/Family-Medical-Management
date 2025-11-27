@@ -20,7 +20,11 @@
 </header>
 
 <!-- Menu chỉ hiển thị nếu login -->
-<app-menu [isOpen]="isOpen" *ngIf="authService.isLoggedIn()"></app-menu>
+<app-menu
+  [isOpen]="isOpen"
+  (isOpenChange)="isOpen = $event"
+  *ngIf="authService.isLoggedIn()"
+></app-menu>
 
 <main class="main-content">
   <router-outlet></router-outlet>
