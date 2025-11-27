@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,6 +12,7 @@ import { PatientDTO } from '../../../features/model/patient.model';
   selector: 'app-patient-dialog',
   standalone: true,
   imports: [
+    CommonModule,
     MatFormFieldModule, 
     MatInputModule, 
     MatSelectModule, 
@@ -23,6 +25,10 @@ import { PatientDTO } from '../../../features/model/patient.model';
     <h2 mat-dialog-title>{{ data.action === 'create' ? 'Thêm Bệnh Nhân' : 'Sửa Bệnh Nhân' }}</h2>
     <mat-dialog-content>
       <form #patientForm="ngForm">
+        <mat-form-field appearance="fill">
+          <mat-label>User ID</mat-label>
+          <input matInput type="number" [(ngModel)]="patient.userId" name="userId" required>
+        </mat-form-field>
         <mat-form-field appearance="fill">
           <mat-label>Họ Tên</mat-label>
           <input matInput [(ngModel)]="patient.fullName" name="fullName" required>
@@ -39,7 +45,14 @@ import { PatientDTO } from '../../../features/model/patient.model';
             <mat-option value="other">Khác</mat-option>
           </mat-select>
         </mat-form-field>
-        <!-- Thêm fields khác nếu cần (bloodType, emergencyContact) -->
+        <mat-form-field appearance="fill">
+          <mat-label>Nhóm Máu</mat-label>
+          <input matInput [(ngModel)]="patient.bloodType" name="bloodType">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Liên Hệ Khẩn Cấp</mat-label>
+          <input matInput [(ngModel)]="patient.emergencyContact" name="emergencyContact">
+        </mat-form-field>
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">

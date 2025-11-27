@@ -7,6 +7,10 @@ import { LoginAdminComponent } from './admin/login-admin/login-admin';
 import { authGuard } from './features/service/auth-service/auth.guard';
 import { RegisterComponent } from './user/register/register';
 import { DashboardAdminComponent } from './admin/dashboard-admin/dashboard-admin';
+import { PatientAdminContainer } from './admin/patient-admin/container/container';
+import { DoctorAdminContainer } from './admin/doctor-admin/container/container';
+import { UserAdminContainer } from './admin/user-admin/container/container';
+import { AppointmentContainer } from './user/appointment/container/container';
 
 
 
@@ -19,5 +23,10 @@ export const routes: Routes = [
     { path: 'dashboard-admin', component: DashboardAdminComponent, canActivate: [authGuard] },
     { path: 'patients', component: PatientContainer, canActivate: [authGuard] },
     { path: 'doctor', component: DoctorContainer, canActivate: [authGuard] },
+    { path: 'appointments', component: AppointmentContainer, canActivate: [authGuard] },
+    // Admin routes
+    { path: 'admin/patients', component: PatientAdminContainer, canActivate: [authGuard] },
+    { path: 'admin/doctors', component: DoctorAdminContainer, canActivate: [authGuard] },
+    { path: 'admin/users', component: UserAdminContainer, canActivate: [authGuard] },
     { path: '**', redirectTo: '/login' }
 ];

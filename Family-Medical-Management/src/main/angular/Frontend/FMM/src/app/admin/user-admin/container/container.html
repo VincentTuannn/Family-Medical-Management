@@ -1,0 +1,81 @@
+<div class="admin-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>group</mat-icon>
+        Quản Lý Người Dùng
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="toolbar">
+        <button mat-raised-button color="primary" (click)="addUser()">
+          <mat-icon>add</mat-icon>
+          Thêm Người Dùng
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="loading">Đang tải...</div>
+
+      <table mat-table [dataSource]="users" class="mat-elevation-z8" *ngIf="!loading">
+        <ng-container matColumnDef="userId">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let user">{{user.userId}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef>Tên Đăng Nhập</th>
+          <td mat-cell *matCellDef="let user">{{user.username}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let user">{{user.email}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef>Điện Thoại</th>
+          <td mat-cell *matCellDef="let user">{{user.phone}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef>Địa Chỉ</th>
+          <td mat-cell *matCellDef="let user">{{user.address}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Vai Trò</th>
+          <td mat-cell *matCellDef="let user">{{user.role}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="isActive">
+          <th mat-header-cell *matHeaderCellDef>Trạng Thái</th>
+          <td mat-cell *matCellDef="let user">
+            <span [class.active]="user.isActive" [class.inactive]="!user.isActive">
+              {{user.isActive ? 'Hoạt động' : 'Không hoạt động'}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Hành Động</th>
+          <td mat-cell *matCellDef="let user">
+            <button mat-icon-button color="primary" (click)="editUser(user.userId)" title="Sửa">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteUser(user.userId)" title="Xóa">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="!loading && users.length === 0" class="no-data">
+        <p>Không có dữ liệu</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+

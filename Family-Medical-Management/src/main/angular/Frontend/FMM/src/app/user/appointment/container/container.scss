@@ -1,4 +1,4 @@
-.admin-container {
+.appointment-container {
   padding: 20px;
 }
 
@@ -15,12 +15,7 @@ table {
   width: 100%;
 }
 
-.active {
-  color: green;
-  font-weight: bold;
+mat-chip {
+  font-weight: 500;
 }
 
-.inactive {
-  color: red;
-  font-weight: bold;
-}

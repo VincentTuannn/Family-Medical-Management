@@ -1,7 +1,6 @@
 package Backend.FMM.Service;
 
 import Backend.FMM.DTO.AppointmentDTO;
-import Backend.FMM.DTO.TransferDTO;
 import Backend.FMM.Entity.Appointment;
 import Backend.FMM.Repository.AppointmentRepository;
 import Backend.FMM.Repository.PatientRepository;
@@ -26,12 +25,24 @@ public class AppointmentService {
 
 	public AppointmentDTO save(AppointmentDTO dto) {
         Appointment appointment = new Appointment();
+        
+        // Nếu là update, load entity cũ
+        if (dto.getAppointmentId() != null && dto.getAppointmentId() > 0) {
+            appointment = appointmentRepository.findById(dto.getAppointmentId())
+                    .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + dto.getAppointmentId()));
+        }
+        
         // Convert Date to Timestamp for entity
         if (dto.getAppointmentDate() != null) {
             appointment.setAppointmentDate(new java.sql.Timestamp(dto.getAppointmentDate().getTime()));
         }
-        appointment.setStatus(Appointment.Status.valueOf(dto.getStatus()));
+        
+        if (dto.getStatus() != null) {
+            appointment.setStatus(Appointment.Status.valueOf(dto.getStatus()));
+        }
+        
         appointment.setNotes(dto.getNotes());
+        
 		// Set patient, doctor từ DTO IDs nếu có
 		if (dto.getPatientId() != null) {
 			patientRepository.findById(dto.getPatientId()).ifPresent(appointment::setPatient);
@@ -39,6 +50,11 @@ public class AppointmentService {
 		if (dto.getDoctorId() != null) {
 			doctorRepository.findById(dto.getDoctorId()).ifPresent(appointment::setDoctor);
 		}
+		
+		// Set transfer nếu có (optional - chỉ khi appointment được tạo từ transfer)
+		// Nếu transfer_id là null hoặc không có trong DTO, giữ nguyên giá trị hiện tại (có thể là null)
+		// Không cần xử lý gì thêm vì transfer là optional field
+		
         Appointment savedAppointment = appointmentRepository.save(appointment);
         return toDTO(savedAppointment);
     }

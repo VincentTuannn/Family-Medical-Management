@@ -34,7 +34,7 @@ public class Appointment {
     @Column(name = "appointment_date", nullable = false)
     private Timestamp appointmentDate = new Timestamp(System.currentTimeMillis());
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = AppointmentStatusConverter.class)
     @Column(nullable = false)
     private Status status = Status.SCHEDULED;
 

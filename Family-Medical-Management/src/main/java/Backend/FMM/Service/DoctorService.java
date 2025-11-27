@@ -16,7 +16,16 @@ public class DoctorService {
     private DoctorRepository doctorRepository;
 
     public DoctorDTO save(DoctorDTO dto) {
-        Doctor doctor = new Doctor();
+        Doctor doctor;
+        if (dto.getDoctorId() != null && dto.getDoctorId() > 0) {
+            // Update existing doctor
+            doctor = doctorRepository.findById(dto.getDoctorId())
+                    .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + dto.getDoctorId()));
+        } else {
+            // Create new doctor
+            doctor = new Doctor();
+        }
+        
         doctor.setFullName(dto.getFullName());
         doctor.setSpecialty(dto.getSpecialty());
         doctor.setClinicName(dto.getClinicName());
