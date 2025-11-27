@@ -33,10 +33,8 @@ export class DashboardContainer implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Đảm bảo user đã login (token sẵn sàng) trước khi gọi API
-    // Sử dụng Observable để đảm bảo token đã được load
     this.authService.isLoggedIn$.pipe(
-      filter(isLoggedIn => isLoggedIn), // Chỉ tiếp tục khi đã login
+      filter(token => !!token), // Chỉ tiếp tục khi đã login
       take(1), // Chỉ lấy giá trị đầu tiên
       takeUntil(this.destroy$), // Cleanup khi component destroy
       delay(50), // Đợi 50ms để đảm bảo interceptor đã sẵn sàng
@@ -52,7 +50,7 @@ export class DashboardContainer implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: (err) => {
-        console.error('❌ Lỗi load dashboard:', err);
+        console.error('Lỗi load dashboard:', err);
         // Nếu lỗi 403, thử lại sau 200ms (có thể do race condition)
         if (err.status === 403) {
           console.log('🔄 Lỗi 403, thử lại sau 200ms...');
@@ -87,7 +85,7 @@ export class DashboardContainer implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: (err) => {
-        console.error('❌ Lỗi load dashboard (retry):', err);
+        console.error(' Lỗi load dashboard (retry):', err);
         this.loading = false;
         this.stats = Array(6).fill(null).map((_, i) => ({
           title: ['Bệnh Nhân', 'Lịch Hẹn', 'Chuyển Hồ Sơ', 'Bác Sĩ', 'Hồ Sơ Y Tế', 'Người Dùng'][i],

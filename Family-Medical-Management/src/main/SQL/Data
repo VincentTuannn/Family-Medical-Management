@@ -2,8 +2,9 @@ USE medical_family_db;
 
 -- Thêm Users
 INSERT INTO `user` (username, email, password, phone, address, role, is_active) VALUES
-('nguyenvannam', 'nam.nguyen@email.com', 'hashed_pass_123', '0123456789', '123 Đường ABC, Hà Nội', 'user', 1),
-('tranthilan', 'lan.tran@email.com', 'hashed_pass_456', '0987654321', '456 Đường XYZ, TP.HCM', 'user', 1);
+('admin', 'admin@gmail.com', 'admin123', '0354525657', '123 Đường ABC, Sài Gòn', 'admin', 1),
+('nguyenvannam', 'nam.nguyen@gmail.com', 'hashed_pass_123', '0123456789', '123 Đường ABC, Hà Nội', 'user', 1),
+('tranthilan', 'lan.tran@gmail.com', 'hashed_pass_456', '0987654321', '456 Đường XYZ, TP.HCM', 'user', 1);
 
 -- Thêm Doctors
 INSERT INTO doctor (full_name, specialty, clinic_name, email, phone, license_number, is_active) VALUES
