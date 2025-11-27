@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 public class AuditLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "log_id")
     private Integer logId;
 
     @ManyToOne(fetch = FetchType.LAZY)

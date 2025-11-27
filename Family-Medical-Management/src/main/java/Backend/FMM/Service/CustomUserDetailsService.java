@@ -19,10 +19,19 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
+        // Log để debug
+        System.out.println("📋 Loading user: " + username + 
+            ", Role: " + user.getRole().name() + 
+            ", Active: " + user.isActive());
+
+        // Tạo UserDetails với role và active status
+        // .roles() sẽ tự động thêm prefix "ROLE_" vào authorities
+        // Ví dụ: roles("USER") -> authorities = ["ROLE_USER"]
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .roles(user.getRole().name()) // hoặc .authorities(user.getAuthorities())
+                .roles(user.getRole().name()) // Tạo authorities với prefix ROLE_
+                .disabled(!user.isActive()) // Set disabled nếu user không active
                 .build();
     }
 }

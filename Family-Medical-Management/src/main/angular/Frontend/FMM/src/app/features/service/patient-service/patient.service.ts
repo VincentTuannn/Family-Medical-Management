@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';  // Config URL backend
 import { PatientDTO } from '../../model/patient.model';  // Model DTO từ backend
@@ -8,40 +8,49 @@ import { PatientDTO } from '../../model/patient.model';  // Model DTO từ backe
   providedIn: 'root'
 })
 export class PatientService {
-  private apiUrl = `${environment.apiUrl}/patient`;  // e.g., http://localhost:8080/api/patient
+  private apiUrl = `${environment.apiUrl}/patient`;  // e.g., http://localhost:8081/api/patient
 
-  private httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-  };
+  // Đã loại bỏ httpOptions tĩnh
+  // Angular tự động set Content-Type: application/json khi có body
+  // Interceptor tự động thêm Authorization header
+  // Khi cần custom headers (cho Spring AI, Kafka, etc.), có thể thêm trực tiếp trong method
 
   constructor(private http: HttpClient) {}
 
   // GET all patients
   getAllPatients(): Observable<PatientDTO[]> {
-    return this.http.get<PatientDTO[]>(this.apiUrl, this.httpOptions);
+    return this.http.get<PatientDTO[]>(this.apiUrl);
   }
 
   // GET by ID
   getPatientById(id: number): Observable<PatientDTO> {
-    return this.http.get<PatientDTO>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.get<PatientDTO>(`${this.apiUrl}/${id}`);
   }
 
   // POST create
   createPatient(patient: PatientDTO): Observable<PatientDTO> {
-    return this.http.post<PatientDTO>(this.apiUrl, patient, this.httpOptions);
+    return this.http.post<PatientDTO>(this.apiUrl, patient);
   }
 
   // PUT update
   updatePatient(id: number, patient: PatientDTO): Observable<PatientDTO> {
-    return this.http.put<PatientDTO>(`${this.apiUrl}/${id}`, patient, this.httpOptions);
+    return this.http.put<PatientDTO>(`${this.apiUrl}/${id}`, patient);
   }
 
   // DELETE by ID
   deletePatient(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.httpOptions);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   getPatientsByUserId(userId: number): Observable<PatientDTO[]> {
-    return this.http.get<PatientDTO[]>(`${this.apiUrl}/user/${userId}`, this.httpOptions);  // Gọi API /api/patient/user/{userId}
+    return this.http.get<PatientDTO[]>(`${this.apiUrl}/user/${userId}`);  // Gọi API /api/patient/user/{userId}
   }
+
+  // Ví dụ: Khi cần thêm custom headers cho Spring AI (tương lai)
+  // getAIPrediction(data: any): Observable<any> {
+  //   return this.http.post(`${this.apiUrl}/ai/predict`, data, {
+  //     headers: { 'X-AI-Model': 'gpt-4', 'X-Stream': 'true' }
+  //   });
+  //   // Interceptor vẫn tự động thêm Authorization header
+  // }
 }

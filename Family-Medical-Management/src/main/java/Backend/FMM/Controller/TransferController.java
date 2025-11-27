@@ -2,10 +2,12 @@ package Backend.FMM.Controller;
 
 import Backend.FMM.DTO.TransferDTO;
 import Backend.FMM.Service.TransferService;
+import Backend.FMM.Security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +17,26 @@ public class TransferController {
     @Autowired
     private TransferService transferService;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @GetMapping
     public List<TransferDTO> getAllTransfers() {
         return transferService.findAll();
+    }
+
+    @GetMapping("/my")
+    public List<TransferDTO> getMyTransfers(HttpServletRequest request) {
+        // Lấy userId từ JWT token
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            Integer userId = jwtTokenProvider.getUserIdFromJWT(token);
+            if (userId != null) {
+                return transferService.findAllByUserId(userId);
+            }
+        }
+        return List.of();
     }
 
     @GetMapping("/{id}")

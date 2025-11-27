@@ -14,6 +14,7 @@ import java.sql.Date;
 public class MedicalRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "record_id")
     private Integer recordId;
 
     @ManyToOne(fetch = FetchType.LAZY)

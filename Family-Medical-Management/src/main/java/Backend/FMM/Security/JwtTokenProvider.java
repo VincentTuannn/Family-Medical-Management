@@ -63,6 +63,27 @@ public class JwtTokenProvider {
         return claims.getSubject();
     }
 
+    // Lấy userId từ JWT token
+    public Integer getUserIdFromJWT(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(getSignKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            
+            Object userIdObj = claims.get("userId");
+            if (userIdObj instanceof Integer) {
+                return (Integer) userIdObj;
+            } else if (userIdObj instanceof Number) {
+                return ((Number) userIdObj).intValue();
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     // Kiểm tra token hợp lệ
     public boolean validateToken(String authToken) {
         try {

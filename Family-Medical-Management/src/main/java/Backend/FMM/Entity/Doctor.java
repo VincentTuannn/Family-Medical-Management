@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "doctor_id")
     private Integer doctorId;
 
     @Column(nullable = false, length = 100)

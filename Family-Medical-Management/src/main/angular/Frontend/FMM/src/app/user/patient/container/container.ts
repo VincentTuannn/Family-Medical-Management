@@ -29,24 +29,34 @@ export class PatientContainer implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('🔵 PatientContainer ngOnInit() - Component đã được load');
     this.loadMyPatients();  // Load chỉ bệnh nhân của user hiện tại
   }
 
   loadMyPatients() {
-  const userId = this.authService.getUserId();  
+    const userId = this.authService.getUserId();  
+    console.log('🔍 loadMyPatients - userId:', userId);
 
-  if (userId === null) {
-    console.error('User ID không tồn tại, vui lòng đăng nhập lại.');
-    this.router.navigate(['/login']);  // Redirect nếu chưa login
-    return;
+    if (userId === null) {
+      console.error('❌ User ID không tồn tại, vui lòng đăng nhập lại.');
+      this.router.navigate(['/login']);  // Redirect nếu chưa login
+      return;
+    }
+
+    console.log('📡 Gọi API: GET /api/patient/user/' + userId);
+    // Bây giờ userId là number, gọi service an toàn
+    this.patientService.getPatientsByUserId(userId).subscribe({
+      next: (data) => {
+        console.log('✅ Load bệnh nhân thành công:', data);
+        this.patients = data;
+      },
+      error: (err) => {
+        console.error('❌ Lỗi load bệnh nhân của bạn:', err);
+        console.error('   URL được gọi:', `/api/patient/user/${userId}`);
+        console.error('   Status:', err.status, err.statusText);
+      }
+    });
   }
-
-  // Bây giờ userId là number, gọi service an toàn
-  this.patientService.getPatientsByUserId(userId).subscribe({
-    next: (data) => this.patients = data,
-    error: (err) => console.error('Lỗi load bệnh nhân của bạn:', err)
-  });
-}
 
   createPatient() {
       // Mở dialog/form thêm mới (giả định có PatientDialogComponent)

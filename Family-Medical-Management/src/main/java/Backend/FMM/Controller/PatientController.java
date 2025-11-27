@@ -2,10 +2,12 @@ package Backend.FMM.Controller;
 
 import Backend.FMM.DTO.PatientDTO;
 import Backend.FMM.Service.PatientService;
+import Backend.FMM.Security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +17,26 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @GetMapping
     public List<PatientDTO> getAllPatients() {
         return patientService.findAll();
+    }
+
+    @GetMapping("/my")
+    public List<PatientDTO> getMyPatients(HttpServletRequest request) {
+        // Lấy userId từ JWT token trong request header
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            Integer userId = jwtTokenProvider.getUserIdFromJWT(token);
+            if (userId != null) {
+                return patientService.findAllByUserId(userId);
+            }
+        }
+        return List.of(); // Trả về danh sách rỗng nếu không lấy được userId
     }
 
     @GetMapping("/{id}")

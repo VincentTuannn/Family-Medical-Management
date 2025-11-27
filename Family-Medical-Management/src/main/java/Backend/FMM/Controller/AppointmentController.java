@@ -2,12 +2,16 @@ package Backend.FMM.Controller;
 
 import Backend.FMM.DTO.AppointmentDTO;
 import Backend.FMM.Service.AppointmentService;
+import Backend.FMM.Service.PatientService;
+import Backend.FMM.Security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/appointment")
@@ -15,9 +19,33 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
+    @Autowired
+    private PatientService patientService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     @GetMapping
     public List<AppointmentDTO> getAllAppointments() {
         return appointmentService.findAll();
+    }
+
+    @GetMapping("/my")
+    public List<AppointmentDTO> getMyAppointments(HttpServletRequest request) {
+        // Lấy userId từ JWT token
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            Integer userId = jwtTokenProvider.getUserIdFromJWT(token);
+            if (userId != null) {
+                // Lấy tất cả patients của user, sau đó lấy appointments của các patients đó
+                var myPatients = patientService.findAllByUserId(userId);
+                return myPatients.stream()
+                    .flatMap(patient -> appointmentService.findAllByPatientId(patient.getPatientId()).stream())
+                    .collect(Collectors.toList());
+            }
+        }
+        return List.of();
     }
 
     @GetMapping("/{id}")

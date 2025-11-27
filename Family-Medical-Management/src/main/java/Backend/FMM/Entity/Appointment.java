@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "appointment_id")
     private Integer appointmentId;
 
     @ManyToOne(fetch = FetchType.LAZY)

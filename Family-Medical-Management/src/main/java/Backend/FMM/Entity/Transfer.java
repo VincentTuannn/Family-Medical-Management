@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 public class Transfer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "transfer_id")
     private Integer transferId;
 
     @ManyToOne(fetch = FetchType.LAZY)
