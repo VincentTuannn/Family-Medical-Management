@@ -22,13 +22,13 @@ public class Patient {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
 
     @Column(name = "date_of_birth", nullable = false)
     private Date dateOfBirth;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = GenderConverter.class)
     @Column(nullable = false)
     private Gender gender;
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,7 @@ import { PatientDialogComponent } from '../dialog/patient-dialog.component';
 import { PatientService } from '../../../features/service/patient-service/patient.service'
 import { PatientDTO } from '../../../features/model/patient.model';
 import { AuthService } from '../../../features/service/auth-service/auth.service';
+import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-container',
@@ -25,28 +26,45 @@ export class PatientContainer implements OnInit {
     private patientService: PatientService,
     public dialog: MatDialog,  // Inject MatDialog
     private authService: AuthService,  // Import AuthService để lấy userId
-    private router: Router  // Import Router để navigate
+    private router: Router,  // Import Router để navigate
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.loadMyPatients();  // Load chỉ bệnh nhân của user hiện tại
+    this.waitForTokenAndLoad();  // Load chỉ bệnh nhân của user hiện tại
+  }
+
+  private waitForTokenAndLoad() {
+    const token = this.authService.getToken();
+    if (token) {
+      // Token đã sẵn sàng -> load patients (delay nhẹ để đảm bảo interceptor đã attach token)
+      setTimeout(() => this.loadMyPatients(), 50);
+      return;
+    }
+
+    // Token chưa có -> chờ observable emit
+    this.authService.isLoggedIn$
+      .pipe(filter((value): value is string => !!value), take(1))
+      .subscribe(() => this.loadMyPatients());
   }
 
   loadMyPatients() {
-  const userId = this.authService.getUserId();  
-
-  if (userId === null) {
-    console.error('User ID không tồn tại, vui lòng đăng nhập lại.');
-    this.router.navigate(['/login']);  // Redirect nếu chưa login
-    return;
+    this.patientService.getMyPatients().subscribe({
+      next: (data) => {
+        this.patients = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Lỗi load bệnh nhân của bạn:', err);
+        if (err.status === 403) {
+          console.log('🔄 Lỗi 403, thử lại sau 200ms...');
+          setTimeout(() => this.loadMyPatients(), 200);
+        } else {
+          this.cdr.detectChanges();
+        }
+      }
+    });
   }
-
-  // Bây giờ userId là number, gọi service an toàn
-  this.patientService.getPatientsByUserId(userId).subscribe({
-    next: (data) => this.patients = data,
-    error: (err) => console.error('Lỗi load bệnh nhân của bạn:', err)
-  });
-}
 
   createPatient() {
       // Mở dialog/form thêm mới (giả định có PatientDialogComponent)

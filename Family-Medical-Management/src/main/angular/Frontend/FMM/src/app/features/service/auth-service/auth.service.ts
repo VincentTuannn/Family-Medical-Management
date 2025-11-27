@@ -42,7 +42,25 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return this.tokenSubject.value;
+    // Lấy từ BehaviorSubject trước
+    let token = this.tokenSubject.value;
+    
+    // Fallback: Nếu BehaviorSubject chưa có giá trị, thử lấy từ localStorage
+    // Điều này xử lý race condition khi service chưa khởi tạo xong
+    if (!token) {
+      try {
+        token = localStorage.getItem('token');
+        // Nếu tìm thấy trong localStorage, cập nhật BehaviorSubject
+        if (token) {
+          this.tokenSubject.next(token);
+        }
+      } catch (e) {
+        // localStorage có thể không available trong một số trường hợp
+        console.warn('⚠️ Không thể truy cập localStorage');
+      }
+    }
+    
+    return token;
   }
 
   getUserId(): number | null {

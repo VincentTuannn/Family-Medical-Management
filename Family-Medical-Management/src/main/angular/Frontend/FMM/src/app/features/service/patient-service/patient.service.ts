@@ -22,6 +22,11 @@ export class PatientService {
     return this.http.get<PatientDTO[]>(this.apiUrl);
   }
 
+  // GET patients by current user (using /my endpoint)
+  getMyPatients(): Observable<PatientDTO[]> {
+    return this.http.get<PatientDTO[]>(`${this.apiUrl}/my`);
+  }
+
   // GET by ID
   getPatientById(id: number): Observable<PatientDTO> {
     return this.http.get<PatientDTO>(`${this.apiUrl}/${id}`);
