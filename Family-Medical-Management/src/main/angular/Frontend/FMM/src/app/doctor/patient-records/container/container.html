@@ -1,0 +1,58 @@
+<div class="doctor-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>folder_shared</mat-icon>
+        Hồ Sơ Bệnh Nhân
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="loading" class="loading">Đang tải...</div>
+
+      <table mat-table [dataSource]="medicalRecords" class="mat-elevation-z8" *ngIf="!loading">
+        <ng-container matColumnDef="recordId">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let record">{{record.recordId}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="patientId">
+          <th mat-header-cell *matHeaderCellDef>Bệnh Nhân ID</th>
+          <td mat-cell *matCellDef="let record">{{record.patientId}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="diagnosis">
+          <th mat-header-cell *matHeaderCellDef>Chẩn Đoán</th>
+          <td mat-cell *matCellDef="let record">{{record.diagnosis}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="treatment">
+          <th mat-header-cell *matHeaderCellDef>Điều Trị</th>
+          <td mat-cell *matCellDef="let record">{{record.treatment}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="medications">
+          <th mat-header-cell *matHeaderCellDef>Thuốc</th>
+          <td mat-cell *matCellDef="let record">{{record.medications || '-'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="recordDate">
+          <th mat-header-cell *matHeaderCellDef>Ngày Tạo</th>
+          <td mat-cell *matCellDef="let record">{{record.recordDate | date:'dd/MM/yyyy'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="doctorName">
+          <th mat-header-cell *matHeaderCellDef>Bác Sĩ</th>
+          <td mat-cell *matCellDef="let record">{{record.doctorName}}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="!loading && medicalRecords.length === 0" class="no-data">
+        <p>Không có hồ sơ bệnh nhân nào</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+

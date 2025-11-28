@@ -1,0 +1,101 @@
+<h2 mat-dialog-title>Thuê Bác Sĩ: {{data.doctor.fullName}}</h2>
+
+<mat-dialog-content>
+  <mat-stepper [linear]="true" [(selectedIndex)]="step">
+    <!-- Bước 1: Thông tin thuê -->
+    <mat-step [stepControl]="hireForm">
+      <ng-template matStepLabel>Thông Tin Thuê</ng-template>
+      <form [formGroup]="hireForm">
+        <div class="step-content">
+          <mat-card class="info-card">
+            <mat-card-content>
+              <p><strong>Bác Sĩ:</strong> {{data.doctor.fullName}}</p>
+              <p><strong>Chuyên Khoa:</strong> {{data.doctor.specialty}}</p>
+              <p><strong>Phòng Khám:</strong> {{data.doctor.clinicName}}</p>
+              <p class="fee"><strong>Phí Thuê:</strong> {{doctorFee | number}} VND</p>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Lý Do Thuê</mat-label>
+            <textarea matInput formControlName="reason" rows="3" placeholder="Nhập lý do bạn muốn thuê bác sĩ này..."></textarea>
+            <mat-error *ngIf="hireForm.get('reason')?.hasError('required')">Vui lòng nhập lý do thuê</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Ngày Hẹn</mat-label>
+            <input matInput type="datetime-local" formControlName="appointmentDate">
+            <mat-error *ngIf="hireForm.get('appointmentDate')?.hasError('required')">Vui lòng chọn ngày hẹn</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Ghi Chú (Tùy chọn)</mat-label>
+            <textarea matInput formControlName="notes" rows="2" placeholder="Thêm ghi chú nếu có..."></textarea>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Bước 2: Thanh toán -->
+    <mat-step [stepControl]="paymentForm">
+      <ng-template matStepLabel>Thanh Toán</ng-template>
+      <form [formGroup]="paymentForm">
+        <div class="step-content">
+          <mat-card class="payment-summary">
+            <mat-card-header>
+              <mat-card-title>Thông Tin Thanh Toán</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="summary-item">
+                <span>Phí Thuê Bác Sĩ:</span>
+                <span class="amount">{{doctorFee | number}} VND</span>
+              </div>
+              <div class="summary-item total">
+                <span><strong>Tổng Cộng:</strong></span>
+                <span class="amount"><strong>{{doctorFee | number}} VND</strong></span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Phương Thức Thanh Toán</mat-label>
+            <mat-select formControlName="paymentMethod">
+              <mat-option *ngFor="let method of paymentMethods" [value]="method.value">
+                {{method.label}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="paymentForm.get('paymentMethod')?.hasError('required')">Vui lòng chọn phương thức thanh toán</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="paymentForm.get('paymentMethod')?.value === 'BANK_TRANSFER'">
+            <mat-label>Mã Giao Dịch (Nếu đã chuyển khoản)</mat-label>
+            <input matInput formControlName="transactionId" placeholder="Nhập mã giao dịch từ ngân hàng">
+          </mat-form-field>
+
+          <div class="payment-note" *ngIf="paymentForm.get('paymentMethod')?.value === 'BANK_TRANSFER'">
+            <mat-icon>info</mat-icon>
+            <p>Vui lòng chuyển khoản {{doctorFee | number}} VND đến tài khoản của chúng tôi và nhập mã giao dịch ở trên.</p>
+          </div>
+
+          <div class="payment-note" *ngIf="paymentForm.get('paymentMethod')?.value === 'CASH'">
+            <mat-icon>info</mat-icon>
+            <p>Bạn sẽ thanh toán bằng tiền mặt khi gặp bác sĩ.</p>
+          </div>
+        </div>
+      </form>
+    </mat-step>
+  </mat-stepper>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="isProcessing">Hủy</button>
+  <button mat-button (click)="previousStep()" *ngIf="step === 1" [disabled]="isProcessing">Quay Lại</button>
+  <button mat-raised-button color="primary" (click)="nextStep()" *ngIf="step === 0" [disabled]="!hireForm.valid || isProcessing">
+    Tiếp Theo
+  </button>
+  <button mat-raised-button color="primary" (click)="processPayment()" *ngIf="step === 1" [disabled]="!paymentForm.valid || isProcessing">
+    <mat-icon *ngIf="isProcessing">hourglass_empty</mat-icon>
+    {{isProcessing ? 'Đang Xử Lý...' : 'Thanh Toán'}}
+  </button>
+</mat-dialog-actions>
+

@@ -1,0 +1,32 @@
+.doctor-container {
+  padding: 20px;
+}
+
+.toolbar {
+  margin-bottom: 20px;
+}
+
+.loading, .no-data {
+  text-align: center;
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.status-pending {
+  color: #FF9800;
+  font-weight: bold;
+}
+
+.status-approved {
+  color: green;
+  font-weight: bold;
+}
+
+.status-revoked {
+  color: red;
+  font-weight: bold;
+}
+

@@ -1,0 +1,28 @@
+.admin-container {
+  padding: 20px;
+}
+
+.loading, .no-data {
+  text-align: center;
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.status-scheduled {
+  color: #2196F3;
+  font-weight: bold;
+}
+
+.status-completed {
+  color: green;
+  font-weight: bold;
+}
+
+.status-cancelled {
+  color: red;
+  font-weight: bold;
+}
+

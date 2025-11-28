@@ -1,0 +1,75 @@
+<div class="doctor-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>event</mat-icon>
+        Danh Sách Yêu Cầu Lịch Hẹn
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="loading" class="loading">Đang tải...</div>
+
+      <table mat-table [dataSource]="myAppointments" class="mat-elevation-z8" *ngIf="!loading">
+        <ng-container matColumnDef="appointmentId">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let appointment">{{appointment.appointmentId}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="patientId">
+          <th mat-header-cell *matHeaderCellDef>Bệnh Nhân ID</th>
+          <td mat-cell *matCellDef="let appointment">{{appointment.patientId}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="appointmentDate">
+          <th mat-header-cell *matHeaderCellDef>Ngày Hẹn</th>
+          <td mat-cell *matCellDef="let appointment">{{appointment.appointmentDate | date:'dd/MM/yyyy HH:mm'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Trạng Thái</th>
+          <td mat-cell *matCellDef="let appointment">
+            <mat-chip [class.status-scheduled]="appointment.status === 'SCHEDULED'"
+                      [class.status-completed]="appointment.status === 'COMPLETED'"
+                      [class.status-cancelled]="appointment.status === 'CANCELLED'">
+              {{appointment.status === 'SCHEDULED' ? 'Đã Lên Lịch' : 
+                appointment.status === 'COMPLETED' ? 'Hoàn Thành' : 'Đã Hủy'}}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="notes">
+          <th mat-header-cell *matHeaderCellDef>Ghi Chú</th>
+          <td mat-cell *matCellDef="let appointment">{{appointment.notes || '-'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Hành Động</th>
+          <td mat-cell *matCellDef="let appointment">
+            <button mat-raised-button color="primary" 
+                    *ngIf="appointment.status === 'SCHEDULED'"
+                    (click)="updateAppointmentStatus(appointment.appointmentId, 'COMPLETED')"
+                    title="Hoàn Thành">
+              <mat-icon>check</mat-icon>
+              Hoàn Thành
+            </button>
+            <button mat-raised-button color="warn" 
+                    *ngIf="appointment.status === 'SCHEDULED'"
+                    (click)="updateAppointmentStatus(appointment.appointmentId, 'CANCELLED')"
+                    title="Hủy">
+              <mat-icon>cancel</mat-icon>
+              Hủy
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="!loading && myAppointments.length === 0" class="no-data">
+        <p>Không có yêu cầu lịch hẹn nào</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+

@@ -4,6 +4,10 @@ import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DoctorService } from '../../../features/service/doctor-service/doctor.service';  
 import { DoctorDTO } from '../../../features/model/doctor.model';  
@@ -14,14 +18,33 @@ import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-container',
-  imports: [CommonModule, MatTableModule, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule, 
+    MatTableModule, 
+    MatCardModule, 
+    MatButtonModule, 
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    FormsModule
+  ],
   templateUrl: './container.html',
   styleUrl: './container.scss',
 })
 export class DoctorContainer implements OnInit, OnDestroy {
   displayedColumns: string[] = ['fullName', 'specialty', 'clinicName', 'phone', 'email', 'actions'];  // Cột table
-  doctors: DoctorDTO[] = [];  // Danh sách bác sĩ
+  doctors: DoctorDTO[] = [];  // Danh sách bác sĩ gốc
+  filteredDoctors: DoctorDTO[] = [];  // Danh sách bác sĩ sau khi filter
   selectedDoctor: DoctorDTO | null = null;  // Bác sĩ được chọn để xem chi tiết
+  
+  // Search và filter
+  searchText: string = '';
+  selectedClinic: string = '';
+  selectedSpecialty: string = '';
+  uniqueClinics: string[] = [];
+  uniqueSpecialties: string[] = [];
+  
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -57,6 +80,11 @@ export class DoctorContainer implements OnInit, OnDestroy {
     this.doctorService.getAllDoctors().subscribe({
       next: (data) => {
         this.doctors = data;
+        // Lấy danh sách unique clinics và specialties
+        this.uniqueClinics = [...new Set(data.map(d => d.clinicName).filter(c => c))].sort();
+        this.uniqueSpecialties = [...new Set(data.map(d => d.specialty).filter(s => s))].sort();
+        // Áp dụng filter ban đầu
+        this.applyFilters();
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -69,6 +97,45 @@ export class DoctorContainer implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  applyFilters() {
+    this.filteredDoctors = this.doctors.filter(doctor => {
+      // Filter theo search text (tìm trong tên, email, phone, specialty, clinic)
+      const matchesSearch = !this.searchText || 
+        doctor.fullName.toLowerCase().includes(this.searchText.toLowerCase()) ||
+        doctor.email.toLowerCase().includes(this.searchText.toLowerCase()) ||
+        doctor.phone.toLowerCase().includes(this.searchText.toLowerCase()) ||
+        doctor.specialty.toLowerCase().includes(this.searchText.toLowerCase()) ||
+        doctor.clinicName.toLowerCase().includes(this.searchText.toLowerCase());
+
+      // Filter theo clinic
+      const matchesClinic = !this.selectedClinic || doctor.clinicName === this.selectedClinic;
+
+      // Filter theo specialty
+      const matchesSpecialty = !this.selectedSpecialty || doctor.specialty === this.selectedSpecialty;
+
+      return matchesSearch && matchesClinic && matchesSpecialty;
+    });
+  }
+
+  onSearchChange() {
+    this.applyFilters();
+  }
+
+  onClinicChange() {
+    this.applyFilters();
+  }
+
+  onSpecialtyChange() {
+    this.applyFilters();
+  }
+
+  clearFilters() {
+    this.searchText = '';
+    this.selectedClinic = '';
+    this.selectedSpecialty = '';
+    this.applyFilters();
   }
 
   ngOnDestroy(): void {
@@ -89,10 +156,13 @@ export class DoctorContainer implements OnInit, OnDestroy {
       });
 
       dialogRef.afterClosed().subscribe((result: any) => {
-        if (result) {
-          // Gọi API "thuê bác sĩ"
-          console.log('Yêu cầu thuê bác sĩ:', doctor);
-          this.doctorService.hireDoctor(doctorId, result);
+        if (result && result.success) {
+          // Thanh toán thành công
+          console.log('Thanh toán thành công:', result.payment);
+          alert('Thanh toán thành công! Bác sĩ đã được thuê.');
+          // Có thể reload danh sách appointments hoặc cập nhật UI
+        } else if (result && !result.success) {
+          alert('Thanh toán thất bại! Vui lòng thử lại.');
         }
       });
     }

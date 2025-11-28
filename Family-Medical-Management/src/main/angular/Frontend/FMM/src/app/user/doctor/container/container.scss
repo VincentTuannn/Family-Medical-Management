@@ -5,12 +5,51 @@
 
   h2 {
     color: #4EC7C0;  // Màu header của bạn
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   p {
     color: #666;
     margin-bottom: 1.5rem;
+  }
+
+  .search-filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    align-items: flex-end;
+
+    .search-field {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .filter-field {
+      min-width: 200px;
+      flex: 0 0 auto;
+    }
+
+    .clear-btn {
+      height: 56px; // Match với form field height
+      flex: 0 0 auto;
+    }
+  }
+
+  .results-info {
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #e3f2fd;
+    border-radius: 4px;
+    color: #1976d2;
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
   }
 
   .doctors-grid {
@@ -54,6 +93,22 @@
 
 // Responsive mobile
 @media (max-width: 768px) {
+  .search-filter-section {
+    flex-direction: column;
+    align-items: stretch;
+
+    .search-field,
+    .filter-field {
+      width: 100%;
+      min-width: unset;
+    }
+
+    .clear-btn {
+      width: 100%;
+      height: auto;
+    }
+  }
+
   .doctors-grid {
     grid-template-columns: 1fr;  // Stack dọc
     gap: 1rem;

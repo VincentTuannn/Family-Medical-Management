@@ -14,7 +14,7 @@ import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-container',
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatCardModule, RouterModule, MatDialogModule, PatientDialogComponent],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatCardModule, RouterModule, MatDialogModule],
   templateUrl: './container.html',
   styleUrl: './container.scss',
 })

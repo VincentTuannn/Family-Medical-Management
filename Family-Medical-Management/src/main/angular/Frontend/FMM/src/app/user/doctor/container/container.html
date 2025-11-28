@@ -1,9 +1,44 @@
 <div class="doctor-container">
   <h2>Danh Sách Bác Sĩ</h2>
 
+  <!-- Search và Filter Section -->
+  <div class="search-filter-section">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Tìm kiếm bác sĩ</mat-label>
+      <input matInput [(ngModel)]="searchText" (ngModelChange)="onSearchChange()" placeholder="Tên, email, số điện thoại, chuyên khoa...">
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Lọc theo Phòng Khám</mat-label>
+      <mat-select [(ngModel)]="selectedClinic" (ngModelChange)="onClinicChange()">
+        <mat-option value="">Tất cả</mat-option>
+        <mat-option *ngFor="let clinic of uniqueClinics" [value]="clinic">{{clinic}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Lọc theo Chuyên Khoa</mat-label>
+      <mat-select [(ngModel)]="selectedSpecialty" (ngModelChange)="onSpecialtyChange()">
+        <mat-option value="">Tất cả</mat-option>
+        <mat-option *ngFor="let specialty of uniqueSpecialties" [value]="specialty">{{specialty}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="accent" (click)="clearFilters()" class="clear-btn">
+      <mat-icon>clear</mat-icon>
+      Xóa Bộ Lọc
+    </button>
+  </div>
+
+  <!-- Thông báo số lượng kết quả -->
+  <div class="results-info" *ngIf="filteredDoctors.length !== doctors.length || searchText || selectedClinic || selectedSpecialty">
+    <p>Tìm thấy <strong>{{filteredDoctors.length}}</strong> bác sĩ trong tổng số <strong>{{doctors.length}}</strong> bác sĩ</p>
+  </div>
+
   <!-- Grid Cards Danh Sách Bác Sĩ -->
   <div class="doctors-grid">
-    <mat-card *ngFor="let doctor of doctors" class="doctor-card">
+    <mat-card *ngFor="let doctor of filteredDoctors" class="doctor-card">
       <mat-card-header>
         <mat-card-title>{{doctor.fullName}}</mat-card-title>
         <mat-card-subtitle>{{doctor.specialty}} - {{doctor.clinicName}}</mat-card-subtitle>
@@ -23,5 +58,11 @@
   <!-- Thông báo nếu không có bác sĩ -->
   <div *ngIf="doctors.length === 0" class="no-data">
     <p>Chưa có bác sĩ nào.</p>
+  </div>
+
+  <!-- Thông báo nếu không tìm thấy kết quả sau khi filter -->
+  <div *ngIf="doctors.length > 0 && filteredDoctors.length === 0" class="no-data">
+    <p>Không tìm thấy bác sĩ nào phù hợp với tiêu chí tìm kiếm.</p>
+    <button mat-raised-button color="primary" (click)="clearFilters()">Xóa Bộ Lọc</button>
   </div>
 </div>
