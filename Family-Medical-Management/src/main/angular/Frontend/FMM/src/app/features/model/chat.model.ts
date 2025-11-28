@@ -2,6 +2,7 @@ export interface ChatRequest {
   message: string;
   conversationId?: string;
   useRAG?: boolean;
+  useDatabase?: boolean; // Use database context
 }
 
 export interface ChatResponse {

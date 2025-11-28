@@ -16,6 +16,10 @@ export class AIService {
    * Chat with AI (with or without RAG)
    */
   chat(request: ChatRequest): Observable<ChatResponse> {
+    console.log('📤 Sending chat request:', {
+      url: `${this.apiUrl}/chat`,
+      request: request
+    });
     return this.http.post<ChatResponse>(`${this.apiUrl}/chat`, request);
   }
 

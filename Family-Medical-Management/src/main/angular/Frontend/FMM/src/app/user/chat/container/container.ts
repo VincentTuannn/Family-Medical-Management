@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -39,6 +39,7 @@ export class ChatContainer implements OnInit, OnDestroy, AfterViewChecked {
   messages: ChatMessage[] = [];
   currentMessage: string = '';
   useRAG: boolean = true;
+  useDatabase: boolean = false; // Use database context
   isLoading: boolean = false;
   isUploading: boolean = false;
   documents: DocumentDTO[] = [];
@@ -49,7 +50,8 @@ export class ChatContainer implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(
     private aiService: AIService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -59,9 +61,12 @@ export class ChatContainer implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
+    // Only scroll if needed, and use requestAnimationFrame for better performance
     if (this.shouldScroll) {
-      this.scrollToBottom();
-      this.shouldScroll = false;
+      requestAnimationFrame(() => {
+        this.scrollToBottom();
+        this.shouldScroll = false;
+      });
     }
   }
 
@@ -88,38 +93,76 @@ export class ChatContainer implements OnInit, OnDestroy, AfterViewChecked {
 
     const request: ChatRequest = {
       message: userMessage,
-      useRAG: this.useRAG
+      useRAG: this.useRAG,
+      useDatabase: this.useDatabase
     };
 
     this.aiService.chat(request)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          // Remove loading message
+          console.log('✅ Chat response received:', response);
+          
+          // Remove loading message immediately
           this.messages = this.messages.filter(m => m.id !== loadingMessage.id);
 
-          // Add AI response
+          // Validate response
+          if (!response || !response.response) {
+            console.error('❌ Invalid response format:', response);
+            this.addMessage(
+              'Xin lỗi, phản hồi từ server không hợp lệ.',
+              false
+            );
+            this.isLoading = false;
+            this.cdr.detectChanges();
+            return;
+          }
+
+          // Add AI response immediately
           this.addMessage(
             response.response,
             false,
             false,
-            response.sources,
-            response.usedRAG
+            response.sources || [],
+            response.usedRAG || false
           );
           this.isLoading = false;
+          
+          // Force change detection and scroll immediately
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.scrollToBottom();
+          }, 0);
         },
         error: (error) => {
-          console.error('Chat error:', error);
+          console.error('❌ Chat error:', error);
+          console.error('Error details:', {
+            status: error.status,
+            statusText: error.statusText,
+            message: error.message,
+            error: error.error
+          });
+          
           // Remove loading message
           this.messages = this.messages.filter(m => m.id !== loadingMessage.id);
 
-          // Add error message
-          this.addMessage(
-            'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.',
-            false
-          );
+          // Show detailed error message
+          let errorMessage = 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.';
+          if (error.status === 401) {
+            errorMessage = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+          } else if (error.status === 403) {
+            errorMessage = 'Bạn không có quyền thực hiện thao tác này.';
+          } else if (error.status === 0) {
+            errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.';
+          } else if (error.error?.error) {
+            errorMessage = error.error.error;
+          } else if (error.error?.message) {
+            errorMessage = error.error.message;
+          }
+
+          this.addMessage(errorMessage, false);
           this.isLoading = false;
-          this.snackBar.open('Lỗi khi gửi tin nhắn', 'Đóng', { duration: 3000 });
+          this.snackBar.open(errorMessage, 'Đóng', { duration: 5000 });
         }
       });
   }
@@ -146,13 +189,20 @@ export class ChatContainer implements OnInit, OnDestroy, AfterViewChecked {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (document) => {
+          console.log('✅ Upload successful:', document);
           this.snackBar.open(`Upload thành công: ${document.fileName}`, 'Đóng', { duration: 3000 });
-          this.loadDocuments();
           this.isUploading = false;
+          
           // Reset file input
           if (this.fileInput) {
             this.fileInput.nativeElement.value = '';
           }
+          
+          // Reload documents immediately and add to list
+          this.loadDocuments();
+          
+          // Force change detection
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Upload error:', error);
@@ -168,10 +218,21 @@ export class ChatContainer implements OnInit, OnDestroy, AfterViewChecked {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (documents) => {
-          this.documents = documents;
+          console.log('✅ Documents loaded:', documents);
+          // Update documents list - ensure all documents are included
+          this.documents = documents || [];
+          // Force change detection to update UI
+          this.cdr.detectChanges();
         },
         error: (error) => {
-          console.error('Load documents error:', error);
+          console.error('❌ Load documents error:', error);
+          console.error('Error details:', {
+            status: error.status,
+            statusText: error.statusText,
+            message: error.message,
+            error: error.error
+          });
+          // Don't show error to user for document loading, but keep existing documents
         }
       });
   }
@@ -197,6 +258,12 @@ export class ChatContainer implements OnInit, OnDestroy, AfterViewChecked {
     this.useRAG = !this.useRAG;
     const mode = this.useRAG ? 'RAG (với tài liệu)' : 'Chat thường';
     this.snackBar.open(`Đã chuyển sang chế độ: ${mode}`, 'Đóng', { duration: 2000 });
+  }
+
+  toggleDatabase(): void {
+    this.useDatabase = !this.useDatabase;
+    const mode = this.useDatabase ? 'Database (cơ sở dữ liệu)' : 'Tắt Database';
+    this.snackBar.open(`Đã ${this.useDatabase ? 'bật' : 'tắt'} ${mode}`, 'Đóng', { duration: 2000 });
   }
 
   toggleDocuments(): void {
@@ -226,9 +293,13 @@ export class ChatContainer implements OnInit, OnDestroy, AfterViewChecked {
 
   private scrollToBottom(): void {
     try {
-      if (this.messagesContainer) {
-        this.messagesContainer.nativeElement.scrollTop = 
-          this.messagesContainer.nativeElement.scrollHeight;
+      if (this.messagesContainer && this.messagesContainer.nativeElement) {
+        const element = this.messagesContainer.nativeElement;
+        // Use smooth scroll for better UX
+        element.scrollTo({
+          top: element.scrollHeight,
+          behavior: 'smooth'
+        });
       }
     } catch (err) {
       console.error('Scroll error:', err);

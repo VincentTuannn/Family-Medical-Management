@@ -16,3 +16,4 @@ public class ChatResponseDTO {
     private Boolean usedRAG;
 }
 
+

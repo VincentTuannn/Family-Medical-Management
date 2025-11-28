@@ -183,8 +183,10 @@ public class VectorStoreService {
         List<Backend.FMM.Entity.Document> allDocuments;
         if (userId != null) {
             allDocuments = documentRepository.findByUserId(userId);
+            System.out.println("🔍 Similarity search - userId: " + userId + ", found " + allDocuments.size() + " documents");
         } else {
             allDocuments = documentRepository.findAll();
+            System.out.println("⚠️ Similarity search - userId is NULL, searching in ALL " + allDocuments.size() + " documents");
         }
         
         // Calculate cosine similarity and sort

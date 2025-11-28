@@ -24,31 +24,54 @@ public class RAGService {
     @Autowired
     private VectorStoreService vectorStoreService;
     
+    @Autowired
+    private DatabaseContextService databaseContextService;
+    
     /**
-     * Process chat with RAG (Retrieval Augmented Generation)
+     * Process chat with RAG (Retrieval Augmented Generation) - documents only
      */
     public ChatResponseDTO chatWithRAG(String message, Integer userId) {
+        return chatWithRAGAndDatabase(message, userId, false);
+    }
+    
+    /**
+     * Process chat with RAG and Database
+     */
+    public ChatResponseDTO chatWithRAGAndDatabase(String message, Integer userId, boolean useDatabase) {
         // Step 1: Retrieve relevant documents
         List<Document> relevantDocs = vectorStoreService.similaritySearch(message, 5, userId);
         
         // Step 2: Build context from retrieved documents
-        String context = buildContext(relevantDocs);
+        String documentContext = buildContext(relevantDocs);
         
-        // Step 3: Build prompt with context
-        String prompt = buildPrompt(message, context);
+        // Step 3: Build database context if requested
+        String databaseContext = "";
+        List<String> sources = new ArrayList<>();
         
-        // Step 4: Get AI response
+        if (useDatabase) {
+            databaseContext = databaseContextService.smartQueryDatabase(message, userId);
+            sources.add("Cơ sở dữ liệu");
+        }
+        
+        // Step 4: Combine contexts
+        String combinedContext = combineContexts(documentContext, databaseContext);
+        
+        // Step 5: Build prompt with context
+        String prompt = buildPrompt(message, combinedContext);
+        
+        // Step 6: Get AI response
         ChatResponse response = chatModel.call(
             new Prompt(new UserMessage(prompt))
         );
         
         String aiResponse = response.getResult().getOutput().getContent();
         
-        // Step 5: Extract sources
-        List<String> sources = relevantDocs.stream()
+        // Step 7: Extract sources from documents
+        List<String> docSources = relevantDocs.stream()
             .map(doc -> doc.getMetadata().getOrDefault("fileName", "Unknown").toString())
             .distinct()
             .collect(Collectors.toList());
+        sources.addAll(docSources);
         
         ChatResponseDTO chatResponse = new ChatResponseDTO();
         chatResponse.setResponse(aiResponse);
@@ -97,15 +120,33 @@ public class RAGService {
     }
     
     /**
+     * Combine document and database contexts
+     */
+    private String combineContexts(String documentContext, String databaseContext) {
+        if (documentContext.isEmpty() && databaseContext.isEmpty()) {
+            return "Không tìm thấy thông tin liên quan.";
+        }
+        
+        StringBuilder combined = new StringBuilder();
+        if (!documentContext.isEmpty()) {
+            combined.append(documentContext).append("\n");
+        }
+        if (!databaseContext.isEmpty()) {
+            combined.append(databaseContext).append("\n");
+        }
+        return combined.toString();
+    }
+    
+    /**
      * Build prompt with context and user message
      */
     private String buildPrompt(String userMessage, String context) {
         return String.format(
             "Bạn là một trợ lý AI chuyên về quản lý hồ sơ y tế gia đình. " +
-            "Hãy trả lời câu hỏi của người dùng dựa trên thông tin từ tài liệu được cung cấp. " +
-            "Nếu thông tin không có trong tài liệu, hãy trả lời dựa trên kiến thức chung của bạn. " +
-            "Trả lời bằng tiếng Việt.\n\n" +
-            "Thông tin từ tài liệu:\n%s\n\n" +
+            "Hãy trả lời câu hỏi của người dùng dựa trên thông tin được cung cấp từ tài liệu và cơ sở dữ liệu. " +
+            "Nếu thông tin không có trong dữ liệu được cung cấp, hãy trả lời dựa trên kiến thức chung của bạn. " +
+            "Trả lời bằng tiếng Việt, rõ ràng và chi tiết.\n\n" +
+            "Thông tin có sẵn:\n%s\n\n" +
             "Câu hỏi của người dùng: %s\n\n" +
             "Hãy trả lời:",
             context,

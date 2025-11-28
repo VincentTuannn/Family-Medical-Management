@@ -42,12 +42,23 @@ public class ChatController {
         
         Integer userId = getUserIdFromRequest(httpRequest);
         
+        // Debug logging
+        System.out.println("🔍 Chat request - useRAG: " + request.getUseRAG() + ", useDatabase: " + request.getUseDatabase() + ", userId: " + userId);
+        System.out.println("🔍 Message: " + request.getMessage());
+        
         ChatResponseDTO response;
         if (request.getUseRAG() != null && request.getUseRAG()) {
-            response = ragService.chatWithRAG(request.getMessage(), userId);
+            if (userId == null) {
+                System.out.println("⚠️ WARNING: userId is null, RAG will search in ALL documents");
+            }
+            // Use RAG with or without database
+            boolean useDatabase = request.getUseDatabase() != null && request.getUseDatabase();
+            response = ragService.chatWithRAGAndDatabase(request.getMessage(), userId, useDatabase);
         } else {
             response = ragService.directChat(request.getMessage());
         }
+        
+        System.out.println("✅ Chat response - usedRAG: " + response.getUsedRAG() + ", sources: " + response.getSources());
         
         return ResponseEntity.ok(response);
     }
@@ -137,7 +148,11 @@ public class ChatController {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            return jwtTokenProvider.getUserIdFromJWT(token);
+            Integer userId = jwtTokenProvider.getUserIdFromJWT(token);
+            System.out.println("🔍 Auth header found, token length: " + token.length() + ", userId: " + userId);
+            return userId;
+        } else {
+            System.out.println("⚠️ No Authorization header found or invalid format");
         }
         return null;
     }

@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>25</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -78,11 +78,39 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<!-- Exclude mockito-core để cập nhật lên version mới nhất hỗ trợ Java 25 -->
+				<exclusion>
+					<groupId>org.mockito</groupId>
+					<artifactId>mockito-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Mockito core version mới nhất (từ 5.0.0 đã tích hợp inline mockmaker) -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.18.0</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- ByteBuddy version 1.17.0+ hỗ trợ Java 25 - Cần ở runtime cho Hibernate -->
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+			<version>1.17.0</version>
+			<!-- Bỏ scope test vì Hibernate cần ByteBuddy ở runtime -->
+		</dependency>
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy-agent</artifactId>
+			<version>1.17.0</version>
+			<!-- Bỏ scope test vì Hibernate cần ByteBuddy ở runtime -->
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.36</version>
+			<version>1.18.38</version>
+			<scope>provided</scope>
 		</dependency>
 		
 		<!-- Spring AI Dependencies -->
@@ -130,11 +158,16 @@
 				<version>3.13.0</version>
 				<configuration>
 					<release>${java.version}</release>
+					<encoding>UTF-8</encoding>
+					<fork>true</fork>
+					<compilerArgs>
+						<arg>-parameters</arg>
+					</compilerArgs>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.36</version>
+							<version>1.18.38</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
@@ -142,6 +175,76 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+				<configuration>
+					<systemPropertyVariables>
+						<spring.classformat.ignore>true</spring.classformat.ignore>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.13</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>check</id>
+						<phase>test</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<!-- Check Service package với minimum 85% -->
+								<rule>
+									<element>PACKAGE</element>
+									<includes>
+										<include>Backend.FMM.Service</include>
+									</includes>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.85</minimum>
+										</limit>
+									</limits>
+								</rule>
+								<!-- Check các packages khác với minimum 70% -->
+								<rule>
+									<element>PACKAGE</element>
+									<includes>
+										<include>Backend.FMM.Controller</include>
+										<include>Backend.FMM.Entity</include>
+										<include>Backend.FMM.Security</include>
+									</includes>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.70</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

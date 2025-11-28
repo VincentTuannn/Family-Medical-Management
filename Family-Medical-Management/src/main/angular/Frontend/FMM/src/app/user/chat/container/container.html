@@ -5,12 +5,20 @@
       <mat-icon class="header-icon">smart_toy</mat-icon>
       <div>
         <h2>Trợ Lý AI Y Tế</h2>
-        <p class="subtitle">{{ useRAG ? 'Đang sử dụng RAG (tài liệu của bạn)' : 'Chat thường' }}</p>
+        <p class="subtitle">
+          <span *ngIf="useRAG">📄 RAG</span>
+          <span *ngIf="useRAG && useDatabase"> + </span>
+          <span *ngIf="useDatabase">💾 Database</span>
+          <span *ngIf="!useRAG && !useDatabase">💬 Chat thường</span>
+        </p>
       </div>
     </div>
     <div class="header-actions">
       <button mat-icon-button (click)="toggleDocuments()" matTooltip="Tài liệu">
         <mat-icon>folder</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleDatabase()" [color]="useDatabase ? 'accent' : ''" matTooltip="Bật/Tắt Database">
+        <mat-icon>{{ useDatabase ? 'storage' : 'storage' }}</mat-icon>
       </button>
       <button mat-icon-button (click)="toggleRAG()" [color]="useRAG ? 'primary' : ''" matTooltip="Bật/Tắt RAG">
         <mat-icon>{{ useRAG ? 'auto_awesome' : 'chat' }}</mat-icon>
